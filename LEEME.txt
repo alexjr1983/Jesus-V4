@@ -1,0 +1,66 @@
+COMUNICADOR JESÚS NEXT — V4 (paso 1 de 3: armazón de app)
+============================================================
+
+Esta entrega NO toca el vocabulario, la voz, el barrido, ARASAAC ni el
+diario: todo ese funcionamiento es idéntico a la V3. Lo que cambia es
+CÓMO se comporta la app en el móvil, para que deje de sentirse como una
+página web y empiece a sentirse como una app instalada de verdad.
+
+Cambios de esta entrega:
+
+1. Manifest e iconos reales (antes iban "en línea" dentro del HTML).
+   -> manifest.json + carpeta icons/ (192, 512, y versión "maskable").
+   -> Al reinstalar en la pantalla de inicio de Jesús, el icono y el
+      splash de arranque se verán mucho mejor.
+
+2. Armazón de app fijo, no una página larga.
+   -> La pantalla principal ya no hace scroll entera; solo se desplaza
+      la zona de tarjetas (main-scroll). La cabecera y la barra inferior
+      se quedan quietas, como en cualquier app.
+   -> Se respetan las zonas seguras del móvil (notch, barra de gestos).
+   -> Ya no hay "rebote" de navegador al hacer scroll de más.
+
+3. Ajustes, Diario y Editor ahora son pantallas ("hojas") que se
+   deslizan desde abajo con botón de volver (<-), en vez de paneles que
+   se despliegan dentro de la misma página. Se abren desde la barra de
+   Modo Cuidador.
+
+4. Cambiar de categoría deslizando el dedo sobre las tarjetas (swipe),
+   además de tocar la pestaña de arriba.
+
+5. Vibración corta al tocar una tarjeta o cambiar de categoría, y una
+   animación de "pulsado" más marcada -- confirmación física de que el
+   toque se ha registrado, como en apps de comunicación profesionales.
+
+IMPORTANTE -- cómo instalarlo:
+Sube la carpeta ENTERA (index.html + manifest.json + icons/ + css/ +
+js/) a GitHub Pages manteniendo la estructura de carpetas. Si ya tenías
+la V3 instalada en la pantalla de inicio de Jesús, conviene BORRAR el
+acceso directo antiguo y volver a "Añadir a pantalla de inicio" para
+que coja el manifest y el icono nuevos.
+
+Siguiente en la hoja de ruta:
+- Paso 2 (incluido): perfil de Jesús -- personas clave, lugares
+  clave y rutina semanal, editable desde Ajustes -> "Perfil de
+  Jesús", sin tocar código.
+- Paso 3 (YA INCLUIDO en esta entrega):
+  * Motor de predicción real: aprende qué suele tocar después de
+    cada cosa (secuencias), lo combina con un piso de sugerencias
+    fijas por modo/hora y con lo más usado en general -- ya no es
+    una lista fija de "si hora < 15".
+  * El modo del día (lectivo / no lectivo / difícil) se puede
+    detectar solo a partir de la rutina del perfil (día + hora),
+    revisándose cada 5 minutos mientras la app está abierta.
+  * La frase de Jesús se habla automáticamente en cuanto la
+    completa (o añade un "con quién / dónde"), ANTES de que
+    responda el Amigo IA -- ya no hace falta acordarse de pulsar
+    "Hablar frase" (el botón sigue ahí, por si quiere repetirla).
+  * Al tocar "Quiero comer / ir / estar" o al entrar en una
+    categoría, la vista baja sola hasta las tarjetas.
+
+Con estos tres pasos, para que la predicción y la rutina tengan
+algo que aprender, rellena el perfil (Ajustes -> Perfil de Jesús)
+con sus personas, lugares y horario real cuanto antes.
+
+Copias de seguridad: igual que siempre, usa "Exportar datos" y
+guarda el .json en un sitio seguro.
