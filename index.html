@@ -67,6 +67,20 @@
         </svg>
       </div>
       <div class="aiBubble" id="aiText">Hola Jesús. Estoy contigo. ¿Cómo estás?</div>
+      <button class="celebrateBtn" onclick="celebrateBig()" title="Celebrar un logro importante con Jesús">🎉<span class="celebrateLabel">Celebrar</span></button>
+    </div>
+
+    <div class="panel gameLaunchPanel">
+      <div class="row" style="justify-content:space-between;align-items:center;flex-wrap:nowrap">
+        <div>
+          <div class="small"><b>🎮 Jugar con Mat-IA</b></div>
+          <div class="mini">Encuentra el picto que busca Mat-IA y gana balones.</div>
+        </div>
+        <div class="row" style="flex-wrap:nowrap">
+          <span id="ballCounter" class="ballBadge">🏀 0</span>
+          <button class="primary" onclick="openGame()">▶️ Jugar</button>
+        </div>
+      </div>
     </div>
 
     <div class="panel mode">
@@ -115,6 +129,24 @@
   </div>
 
   <button id="scanSelectBtn" class="hidden scanSelectBtn" onclick="scanSelect()">✅</button>
+</div>
+
+<!-- ============ Juego "¿Qué busca Mat-IA?" ============
+     Ojo: a diferencia de las hojas de Modo Cuidador, esta pantalla
+     NO está protegida por PIN — es Jesús quien la usa directamente. -->
+<div class="sheet gameSheet" id="gamePanel">
+  <div class="sheet-header">
+    <button class="sheet-back" onclick="closeGame()">←</button>
+    <h2>🎮 ¿Qué busca Mat-IA?</h2>
+    <span id="gameBallCounter" class="ballBadge" style="margin-left:auto">🏀 0</span>
+  </div>
+  <div class="sheet-body">
+    <div class="gameAiRow">
+      <div class="gameAvatar" id="gameAvatar">🏀</div>
+      <div class="aiBubble" id="gameBubble">Mat-IA está pensando...</div>
+    </div>
+    <div id="gameBoard" class="grid" style="margin-top:14px"></div>
+  </div>
 </div>
 
 <!-- ============ Pantallas tipo hoja (Modo Cuidador) ============ -->
@@ -291,6 +323,7 @@
 <script src="js/scan.js"></script>
 <script src="js/arasaac.js"></script>
 <script src="js/ui.js"></script>
+<script src="js/game.js"></script>
 <script src="js/app.js"></script>
 </body>
 </html>

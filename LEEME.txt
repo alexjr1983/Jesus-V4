@@ -1,3 +1,57 @@
+COMUNICADOR JESÚS NEXT — V6: juego "¿Qué busca Mat-IA?" + balones
+============================================================
+
+Esta entrega añade un modo de JUEGO pensado para que Jesús practique
+solo, sin depender de que se lo pida un adulto. No toca el vocabulario,
+la voz, el barrido, ARASAAC ni el diario: todo eso sigue igual que en
+la V5.1. Tampoco toca el botón "🎉 Celebrar" que ya tenías (ese sigue
+siendo manual, para logros importantes de verdad).
+
+1. Botón "▶️ Jugar" en la pantalla principal.
+   -> Nuevo panel arriba del todo (debajo del Amigo IA) con el botón
+      de jugar y un contador de balones 🏀 siempre visible.
+   -> A diferencia de Ajustes/Diario/Editor, este juego NO pide PIN:
+      es Jesús quien lo usa directamente, cuando quiera.
+
+2. Cómo funciona el juego.
+   -> Mat-IA "busca" en voz alta un picto que Jesús ya conoce (prioriza
+      palabras que Jesús ya ha usado alguna vez, para reforzar
+      vocabulario real en vez de palabras al azar).
+   -> Aparecen 4 tarjetas de la MISMA categoría (mismo color que en el
+      resto de la app) y Jesús toca la que cree correcta.
+   -> Acierto: celebración (salto de Mat-IA + confeti breve + sonido +
+      vibración) y se suma 1 balón 🏀 a su colección, que se guarda
+      para siempre (nunca se resta). Después de 1.5s pasa solo a la
+      siguiente ronda.
+   -> Fallo: nunca hay penalización ni cuenta atrás. Mat-IA anima a
+      probar otra vez. Si falla dos veces seguidas en la misma ronda,
+      se resalta la tarjeta correcta con un borde azul discontinuo
+      para que no se quede atascado.
+   -> El vocabulario de "Cuerpo y dolor" queda fuera del juego a
+      propósito (no tiene sentido gamificar el dolor).
+   -> Si "Reducir movimiento" está activado en el móvil, la
+      celebración de cada acierto se queda solo en sonido/vibración,
+      sin el confeti en pantalla (igual que ya hacía el botón
+      "Celebrar").
+
+3. Nombre de la mascota: "Mat-IA".
+   -> Se usa por primera vez en la app, en este juego (bocadillo y
+      voz). El resto de textos de la mascota (saludos, Amigo IA, etc.)
+      siguen sin nombre propio por ahora — si os gusta cómo queda
+      aquí, en el próximo batch lo extendemos al resto de la app.
+
+IMPORTANTE -- cómo instalarlo:
+Igual que siempre: sube la carpeta ENTERA (index.html + manifest.json
++ icons/ + css/ + js/, incluyendo el archivo NUEVO js/game.js) a GitHub
+Pages, sustituyendo los archivos existentes. No hace falta borrar el
+acceso directo de la pantalla de inicio (el manifest no cambia).
+
+Pendiente para el próximo batch (aún sin implementar, a la espera de
+que decidamos juntos): el "reto ligero del día" ligado a la rutina
+semanal, posición fija de palabras entre categorías, y frases
+guardadas/favoritas de acceso directo.
+
+
 COMUNICADOR JESÚS NEXT — V4 (paso 1 de 3: armazón de app)
 ============================================================
 
@@ -39,32 +93,6 @@ la V3 instalada en la pantalla de inicio de Jesús, conviene BORRAR el
 acceso directo antiguo y volver a "Añadir a pantalla de inicio" para
 que coja el manifest y el icono nuevos.
 
-Siguiente en la hoja de ruta:
-- Paso 2 (incluido): perfil de Jesús -- personas clave, lugares
-  clave y rutina semanal, editable desde Ajustes -> "Perfil de
-  Jesús", sin tocar código.
-- Paso 3 (YA INCLUIDO en esta entrega):
-  * Motor de predicción real: aprende qué suele tocar después de
-    cada cosa (secuencias), lo combina con un piso de sugerencias
-    fijas por modo/hora y con lo más usado en general -- ya no es
-    una lista fija de "si hora < 15".
-  * El modo del día (lectivo / no lectivo / difícil) se puede
-    detectar solo a partir de la rutina del perfil (día + hora),
-    revisándose cada 5 minutos mientras la app está abierta.
-  * La frase de Jesús se habla automáticamente en cuanto la
-    completa (o añade un "con quién / dónde"), ANTES de que
-    responda el Amigo IA -- ya no hace falta acordarse de pulsar
-    "Hablar frase" (el botón sigue ahí, por si quiere repetirla).
-  * Al tocar "Quiero comer / ir / estar" o al entrar en una
-    categoría, la vista baja sola hasta las tarjetas.
-
-Con estos tres pasos, para que la predicción y la rutina tengan
-algo que aprender, rellena el perfil (Ajustes -> Perfil de Jesús)
-con sus personas, lugares y horario real cuanto antes.
-
-Copias de seguridad: igual que siempre, usa "Exportar datos" y
-guarda el .json en un sitio seguro.
-
 
 COMUNICADOR JESÚS NEXT — V5: color por tipo de palabra + vocabulario
 ============================================================
@@ -74,54 +102,11 @@ color por función gramatical, inspirado en el sistema de Eneso Verbo
 que usan en el cole. No toca el armazón de app, la predicción, el
 diario ni el barrido: todo eso sigue igual que en V4.
 
-1. Color por tipo de palabra (como Eneso Verbo).
-   -> Cada categoría tiene un color fijo en pestañas y tarjetas:
-      Personas = amarillo · Verbos = verde · Objetos = naranja ·
-      Lugares = azul · Sentimientos = morado · Social/núcleo = rosa ·
-      Cuerpo = rojo suave · Frases rápidas = gris.
-   -> Las tarjetas de "Predicción inteligente" ya NO tapan este color
-      con un azul fijo: ahora se ven del color de su propia categoría,
-      con un anillo azul fino que solo indica "esto es una sugerencia".
-   -> El Amigo IA cambia el color del borde de su bocadillo según el
-      tipo de la última palabra que Jesús ha tocado (ej. verde si ha
-      tocado un verbo, amarillo si ha tocado a una persona).
-   -> En Ajustes hay una leyenda con los 8 colores y su significado.
-   -> En "Alto contraste" los colores por categoría se desactivan a
-      propósito: en ese modo manda el contraste máximo, no el color.
 
-2. Vocabulario ampliado.
-   -> Nueva categoría "Verbos": ir, comer, beber, jugar, dormir,
-      ayudar, hablar, mirar, dar, escuchar, bailar, ducharse.
-   -> Nueva categoría "Ropa": camiseta, pantalón, abrigo, zapatillas,
-      calcetines, gorra, pijama.
-   -> Nueva categoría "Animales": perro, gato, caballo, vaca, pez,
-      pájaro (para hablar de intereses/temas, no solo necesidades).
-   -> Personas: se añade "Amigo/a" genérico.
-   -> Lugares: se añaden Parque y Restaurante.
-   -> Comidas: se añaden Leche, Zumo, Pan y Fruta.
-   -> Actividades: se añaden Leer y Pintar.
-   -> Emociones: se añaden Calor y Frío.
-   -> "Dolor" pasa a llamarse "Cuerpo y dolor" y se añaden Oreja,
-      Espalda y Pierna.
-   -> Núcleo: se añaden Adiós y Por favor.
+COMUNICADOR JESÚS NEXT — V5.1: botón "Celebrar"
+============================================================
 
-3. Nada de esto borra lo que Jesús ya tenía guardado en su tablet.
-   Al abrir la app tras actualizar, sus fotos, su historial de uso,
-   su diario y cualquier categoría o palabra que la familia haya
-   añadido a mano se conservan tal cual — solo se SUMAN las
-   categorías y palabras nuevas de esta versión. No hace falta volver
-   a rellenar nada ni reinstalar desde cero.
-
-IMPORTANTE -- cómo instalarlo:
-Igual que siempre: sube la carpeta ENTERA (index.html + manifest.json
-+ icons/ + css/ + js/) a GitHub Pages manteniendo la estructura de
-carpetas, sustituyendo los archivos existentes. NO hace falta borrar
-el acceso directo de la pantalla de inicio esta vez (el manifest y
-los iconos no cambian en esta entrega), pero si notas que no coge los
-cambios, borra caché o vuelve a "Añadir a pantalla de inicio".
-
-Pendiente para el próximo batch (aún sin implementar, a la espera de
-que decidamos juntos): posibles categorías de calendario/clima y
-profesiones si se ven útiles, y revisar si conviene dividir alguna
-categoría grande en subcategorías más pequeñas si Jesús empieza a usar
-mucho contenido en una sola pestaña.
+Nuevo botón 🎉 "Celebrar" junto a la mascota y el Amigo IA, arriba
+del todo. Es manual a propósito: no se dispara solo por tocar cosas
+en la app, lo activa la familia o el profesor en el momento en que
+Jesús consigue algo importante de verdad.
