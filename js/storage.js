@@ -36,22 +36,23 @@ async function idbSet(key, val) {
 }
 
 async function loadData() {
+  /* mergeWithDefaults (data.js) añade categorías/palabras nuevas de esta
+     versión sin tocar ni borrar fotos, usos o categorías propias que
+     Jesús ya tuviera guardadas. Así una actualización de vocabulario
+     nunca hace que se pierda nada de lo que ya funcionaba. */
   try {
     const d = await idbGet("data");
-    if (d) { d.usage = d.usage || {}; d.sequences = d.sequences || {}; d.intents = d.intents || JSON.parse(JSON.stringify(DEFAULT_DATA.intents)); return d; }
+    if (d) return mergeWithDefaults(d);
   } catch (e) {}
   try {
     const old = localStorage.getItem(STORAGE_KEY);
     if (old) {
-      const parsed = JSON.parse(old);
-      parsed.usage = parsed.usage || {};
-      parsed.sequences = parsed.sequences || {};
-      parsed.intents = parsed.intents || JSON.parse(JSON.stringify(DEFAULT_DATA.intents));
+      const parsed = mergeWithDefaults(JSON.parse(old));
       idbSet("data", parsed).catch(() => {});
       return parsed;
     }
   } catch (e) {}
-  return JSON.parse(JSON.stringify(DEFAULT_DATA));
+  return mergeWithDefaults(null);
 }
 async function saveData() {
   data.usage = data.usage || {};

@@ -91,12 +91,23 @@ function addToken(item) {
     saveData();
   }
   if (item.action === "want") {
-    sentence.push(item); lastIntent = "want"; renderSentence(); renderPredictions(); autoSpeakAndRespond(); return;
+    sentence.push(item); lastIntent = "want"; renderSentence(); renderPredictions(); reinforceCompanionColor(item); autoSpeakAndRespond(); return;
   }
   sentence.push(item);
   if (awaitingModifiers) { awaitingModifiers = false; lastIntent = "afterPick"; }
   else if (lastIntent === "afterPick") { lastIntent = null; }
-  renderSentence(); renderPredictions(); autoSpeakAndRespond();
+  renderSentence(); renderPredictions(); reinforceCompanionColor(item); autoSpeakAndRespond();
+}
+/* El Amigo IA cambia el color del borde de su bocadillo al color de
+   la categoría gramatical de lo último que Jesús ha tocado (verbo,
+   persona, objeto...). Es un refuerzo visual suave, no distrae, y
+   ayuda a que Jesús asocie color <-> tipo de palabra igual que en
+   el comunicador del cole. */
+function reinforceCompanionColor(item) {
+  const bubble = document.getElementById("aiText");
+  if (!bubble) return;
+  const t = catTypeOf(item);
+  bubble.style.borderLeftColor = CAT_TYPE_COLORS[t] || CAT_TYPE_COLORS.frase;
 }
 let aiTimer = null;
 function autoSpeakAndRespond() {
@@ -115,9 +126,31 @@ function removeLast() { sentence.pop(); renderSentence(); renderPredictions(); }
 function clearSentence() { sentence = []; lastIntent = null; lastRealId = null; awaitingModifiers = false; renderSentence(); renderPredictions(); }
 
 /* ---------- Categorías / tarjetas ---------- */
+/* Colores por función gramatical (ver data.js: CAT_TYPE_LABELS y
+   los cats[].type). catTypeOf() encuentra de qué categoría es un
+   item aunque venga de predicciones (mezcla varias categorías) o
+   de un modificador ("con Erik", "en Piscina"). */
+const CAT_TYPE_COLORS = {
+  social: "#ec4899", verbo: "#16a34a", persona: "#eab308", lugar: "#0ea5e9",
+  objeto: "#ea580c", descriptor: "#8b5cf6", cuerpo: "#dc2626", frase: "#64748b"
+};
+function catTypeOf(item) {
+  if (!item) return "frase";
+  const baseId = item._baseId || item.id;
+  for (const cat of data.cats) {
+    const list = data.items[cat.id] || [];
+    if (list.some(x => x.id === baseId)) return cat.type || "objeto";
+  }
+  if (data.intents) {
+    for (const key of Object.keys(data.intents)) {
+      if (data.intents[key].some(x => x.id === baseId)) return "verbo";
+    }
+  }
+  return "objeto";
+}
 function renderTabs() {
   document.getElementById("tabs").innerHTML = data.cats.map(c => `
-    <button class="tab ${c.id === activeCat ? 'active' : ''}" onclick="setActiveCat('${c.id}')">
+    <button class="tab cat-${c.type || 'objeto'} ${c.id === activeCat ? 'active' : ''}" onclick="setActiveCat('${c.id}')">
       <div class="emoji">${c.icon}</div><div class="label">${c.name}</div>
     </button>`).join("");
   restartScan();
@@ -131,12 +164,15 @@ function setActiveCat(id) {
 function setActiveCatBySwipe(id) { if (navigator.vibrate) navigator.vibrate(12); setActiveCat(id); }
 function renderItems() {
   const list = data.items[activeCat] || [];
-  document.getElementById("items").innerHTML = list.map(item => cardHTML(item)).join("");
+  const cat = data.cats.find(c => c.id === activeCat);
+  const catType = cat ? cat.type : "objeto";
+  document.getElementById("items").innerHTML = list.map(item => cardHTML(item, "", catType)).join("");
   restartScan();
 }
-function cardHTML(item, cls = "") {
+function cardHTML(item, cls = "", type = null) {
   const media = item.photo ? `<img src="${item.photo}">` : item.icon;
-  return `<button class="cardbtn ${cls}" onclick='addById("${item.id}")'>
+  const t = type || catTypeOf(item);
+  return `<button class="cardbtn cat-${t} ${cls}" onclick='addById("${item.id}")'>
     <div class="emoji">${media}</div><div class="label">${escapeHtml(item.name)}</div>
     <div class="sub">${escapeHtml(item.speech || "")}</div></button>`;
 }
