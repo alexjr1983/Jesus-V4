@@ -21,7 +21,7 @@
     <div class="row" style="justify-content:space-between;flex-wrap:nowrap">
       <div>
         <h1>🧠 Comunicador Jesús Next</h1>
-        <div class="small">Visual, con voz, frases por pictos/fotos, predicción y diario.</div>
+        <div class="small">Visual, con voz, frases por pictos/fotos, predicción, diario y color por tipo de palabra.</div>
       </div>
       <button id="caregiverLockBtn" class="lockBtn" title="Mantén pulsado 2 segundos para el Modo Cuidador">🔒</button>
     </div>
@@ -150,6 +150,19 @@
       <button onclick="speak('Hola, así sueno yo')">🔊 Probar voz</button>
     </div>
     <hr>
+    <label>🎨 Color por tipo de palabra</label>
+    <div class="mini">Cada categoría tiene un color fijo, como en Eneso Verbo: así Jesús reconoce el mismo código de color en casa y en el cole. El Amigo IA también cambia el color de su bocadillo según el tipo de palabra que Jesús acaba de tocar.</div>
+    <div class="colorLegend">
+      <div class="swatch cat-persona">👨‍👩‍👦 Personas</div>
+      <div class="swatch cat-verbo">🏃 Verbos</div>
+      <div class="swatch cat-objeto">🍽️ Objetos</div>
+      <div class="swatch cat-lugar">📍 Lugares</div>
+      <div class="swatch cat-descriptor">😊 Sentimientos</div>
+      <div class="swatch cat-social">⭐ Social</div>
+      <div class="swatch cat-cuerpo">🆘 Cuerpo</div>
+      <div class="swatch cat-frase">⚡ Frases</div>
+    </div>
+    <hr>
     <label>🤖 Amigo IA conversacional (opcional)</label>
     <div class="mini">Si lo activas, lo que Jesús diga con sus frases (solo texto, nunca fotos) se envía a la API de Claude (Anthropic) para responder de forma más viva y hacerle preguntas sencillas que le animen a hablar él mismo. Tiene coste por uso, necesita internet, y la clave se guarda solo en este móvil — cualquiera con acceso al dispositivo podría verla. Si no lo activas, el amigo sigue funcionando con respuestas fijas, sin coste ni conexión.</div>
     <div class="row" style="margin-top:6px">
@@ -233,7 +246,7 @@
     <h2>⚙️ Añadir o cambiar pictos/fotos</h2>
   </div>
   <div class="sheet-body">
-    <div class="small">Puedes añadir personas, comidas, lugares, actividades, emociones o frases rápidas. Para cambiar un picto por foto: elige imagen y guarda. Queda en este móvil/navegador.</div>
+    <div class="small">Puedes añadir personas, verbos, comidas, lugares, ropa, actividades, animales, emociones, cuerpo o frases rápidas. Para cambiar un picto por foto: elige imagen y guarda. Queda en este móvil/navegador.</div>
     <hr>
     <label>Categoría</label>
     <select id="editCat" onchange="renderEditorList()"></select>

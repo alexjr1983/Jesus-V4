@@ -64,3 +64,64 @@ con sus personas, lugares y horario real cuanto antes.
 
 Copias de seguridad: igual que siempre, usa "Exportar datos" y
 guarda el .json en un sitio seguro.
+
+
+COMUNICADOR JESÚS NEXT — V5: color por tipo de palabra + vocabulario
+============================================================
+
+Esta entrega SÍ toca el vocabulario (para bien: se amplía) y añade
+color por función gramatical, inspirado en el sistema de Eneso Verbo
+que usan en el cole. No toca el armazón de app, la predicción, el
+diario ni el barrido: todo eso sigue igual que en V4.
+
+1. Color por tipo de palabra (como Eneso Verbo).
+   -> Cada categoría tiene un color fijo en pestañas y tarjetas:
+      Personas = amarillo · Verbos = verde · Objetos = naranja ·
+      Lugares = azul · Sentimientos = morado · Social/núcleo = rosa ·
+      Cuerpo = rojo suave · Frases rápidas = gris.
+   -> Las tarjetas de "Predicción inteligente" ya NO tapan este color
+      con un azul fijo: ahora se ven del color de su propia categoría,
+      con un anillo azul fino que solo indica "esto es una sugerencia".
+   -> El Amigo IA cambia el color del borde de su bocadillo según el
+      tipo de la última palabra que Jesús ha tocado (ej. verde si ha
+      tocado un verbo, amarillo si ha tocado a una persona).
+   -> En Ajustes hay una leyenda con los 8 colores y su significado.
+   -> En "Alto contraste" los colores por categoría se desactivan a
+      propósito: en ese modo manda el contraste máximo, no el color.
+
+2. Vocabulario ampliado.
+   -> Nueva categoría "Verbos": ir, comer, beber, jugar, dormir,
+      ayudar, hablar, mirar, dar, escuchar, bailar, ducharse.
+   -> Nueva categoría "Ropa": camiseta, pantalón, abrigo, zapatillas,
+      calcetines, gorra, pijama.
+   -> Nueva categoría "Animales": perro, gato, caballo, vaca, pez,
+      pájaro (para hablar de intereses/temas, no solo necesidades).
+   -> Personas: se añade "Amigo/a" genérico.
+   -> Lugares: se añaden Parque y Restaurante.
+   -> Comidas: se añaden Leche, Zumo, Pan y Fruta.
+   -> Actividades: se añaden Leer y Pintar.
+   -> Emociones: se añaden Calor y Frío.
+   -> "Dolor" pasa a llamarse "Cuerpo y dolor" y se añaden Oreja,
+      Espalda y Pierna.
+   -> Núcleo: se añaden Adiós y Por favor.
+
+3. Nada de esto borra lo que Jesús ya tenía guardado en su tablet.
+   Al abrir la app tras actualizar, sus fotos, su historial de uso,
+   su diario y cualquier categoría o palabra que la familia haya
+   añadido a mano se conservan tal cual — solo se SUMAN las
+   categorías y palabras nuevas de esta versión. No hace falta volver
+   a rellenar nada ni reinstalar desde cero.
+
+IMPORTANTE -- cómo instalarlo:
+Igual que siempre: sube la carpeta ENTERA (index.html + manifest.json
++ icons/ + css/ + js/) a GitHub Pages manteniendo la estructura de
+carpetas, sustituyendo los archivos existentes. NO hace falta borrar
+el acceso directo de la pantalla de inicio esta vez (el manifest y
+los iconos no cambian en esta entrega), pero si notas que no coge los
+cambios, borra caché o vuelve a "Añadir a pantalla de inicio".
+
+Pendiente para el próximo batch (aún sin implementar, a la espera de
+que decidamos juntos): posibles categorías de calendario/clima y
+profesiones si se ven útiles, y revisar si conviene dividir alguna
+categoría grande en subcategorías más pequeñas si Jesús empieza a usar
+mucho contenido en una sola pestaña.
