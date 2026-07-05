@@ -30,6 +30,7 @@ function init() {
     updateCaregiverUI();
     setupCaregiverLongPress();
     initSpeech();
+    await initGame();
 
     document.addEventListener("visibilitychange", () => { if (document.hidden && caregiverMode) exitCaregiverMode(); });
 
