@@ -63,8 +63,42 @@ input,textarea,select{user-select:text}
 }
 .cardbtn:active{transform:scale(.93);filter:brightness(.95)}
 .swipeHint{margin-bottom:4px}
-.cardbtn.pred{border-color:#93c5fd;background:#eff6ff}
+/* Predicción: ya no oculta el color de categoría, solo añade un anillo
+   azul por dentro para marcar "esto es una sugerencia". */
+.cardbtn.pred{outline:3px solid #2563eb;outline-offset:-3px}
 .cardbtn.quick{border-color:#bbf7d0;background:#f0fdf4}
+
+/* ---------- Color por función gramatical (tipo Eneso Verbo) ----------
+   Cada categoría tiene un "type" (ver data.js) que pinta igual sus
+   pestañas y sus tarjetas: personas=amarillo, verbos=verde,
+   objetos=naranja, lugares=azul, sentimientos=morado, social=rosa,
+   cuerpo=rojo suave, frases=gris. Así el código de color es
+   consistente en toda la app y, si el cole usa Eneso Verbo, se
+   reconoce el mismo lenguaje visual en los dos sitios. */
+.cardbtn.cat-social,.tab.cat-social,.swatch.cat-social{background:#fdf2f8;border-color:#f9a8d4}
+.cardbtn.cat-verbo,.tab.cat-verbo,.swatch.cat-verbo{background:#f0fdf4;border-color:#86efac}
+.cardbtn.cat-persona,.tab.cat-persona,.swatch.cat-persona{background:#fefce8;border-color:#fde047}
+.cardbtn.cat-lugar,.tab.cat-lugar,.swatch.cat-lugar{background:#f0f9ff;border-color:#7dd3fc}
+.cardbtn.cat-objeto,.tab.cat-objeto,.swatch.cat-objeto{background:#fff7ed;border-color:#fdba74}
+.cardbtn.cat-descriptor,.tab.cat-descriptor,.swatch.cat-descriptor{background:#f5f3ff;border-color:#c4b5fd}
+.cardbtn.cat-cuerpo,.tab.cat-cuerpo,.swatch.cat-cuerpo{background:#fef2f2;border-color:#fca5a5}
+.cardbtn.cat-frase,.tab.cat-frase,.swatch.cat-frase{background:#f8fafc;border-color:#cbd5e1}
+/* Compound-selector a propósito: así estas reglas ganan siempre a las
+   reglas base .tab/.cardbtn (y a .tab.active), esté cual esté el orden
+   en la hoja. La pestaña activa conserva su color de categoría y
+   además se marca con un anillo azul, en vez de pasar a azul plano. */
+.tab.cat-social.active{background:#fdf2f8;box-shadow:0 0 0 3px #2563eb inset;border-color:#2563eb}
+.tab.cat-verbo.active{background:#f0fdf4;box-shadow:0 0 0 3px #2563eb inset;border-color:#2563eb}
+.tab.cat-persona.active{background:#fefce8;box-shadow:0 0 0 3px #2563eb inset;border-color:#2563eb}
+.tab.cat-lugar.active{background:#f0f9ff;box-shadow:0 0 0 3px #2563eb inset;border-color:#2563eb}
+.tab.cat-objeto.active{background:#fff7ed;box-shadow:0 0 0 3px #2563eb inset;border-color:#2563eb}
+.tab.cat-descriptor.active{background:#f5f3ff;box-shadow:0 0 0 3px #2563eb inset;border-color:#2563eb}
+.tab.cat-cuerpo.active{background:#fef2f2;box-shadow:0 0 0 3px #2563eb inset;border-color:#2563eb}
+.tab.cat-frase.active{background:#f8fafc;box-shadow:0 0 0 3px #2563eb inset;border-color:#2563eb}
+
+/* Leyenda de colores (Ajustes) */
+.colorLegend{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-top:6px}
+.colorLegend .swatch{display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:12px;border:2px solid;font-size:.82rem;font-weight:700}
 .emoji{width:calc(78px*var(--scale));height:calc(78px*var(--scale));font-size:calc(3rem*var(--scale));border-radius:20px;background:#f8fafc;display:flex;align-items:center;justify-content:center;overflow:hidden;border:1px solid var(--border)}
 .emoji img{width:100%;height:100%;object-fit:contain}
 .label{font-size:calc(1rem*var(--scale));font-weight:800;line-height:1.15}
@@ -87,7 +121,7 @@ hr{border:0;border-top:1px solid var(--border);margin:12px 0}
 }
 .bottom .inner{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
 .bigSpeak{font-size:1.05rem}
-.aiBubble{font-size:1.05rem;line-height:1.35;background:#eef2ff;border-left:6px solid #6366f1}
+.aiBubble{font-size:1.05rem;line-height:1.35;background:#eef2ff;border-left:6px solid #6366f1;transition:border-left-color .25s ease}
 
 /* ---------- Compañero animado (mascota jugador del Estudiantes) ---------- */
 .aiRow{display:flex;gap:10px;align-items:center;padding:8px}
@@ -148,6 +182,12 @@ hr{border:0;border-top:1px solid var(--border);margin:12px 0}
 }
 body.contrast{--bg:#000;--card:#0a0a0a;--ink:#fff;--muted:#e6e6e6;--brand:#ffeb3b;--soft:#1a1a1a;--border:#fff}
 body.contrast .cardbtn,body.contrast button,body.contrast .emoji,body.contrast .tab{border-width:3px}
+body.contrast .cardbtn.cat-social,body.contrast .cardbtn.cat-verbo,body.contrast .cardbtn.cat-persona,
+body.contrast .cardbtn.cat-lugar,body.contrast .cardbtn.cat-objeto,body.contrast .cardbtn.cat-descriptor,
+body.contrast .cardbtn.cat-cuerpo,body.contrast .cardbtn.cat-frase,
+body.contrast .tab.cat-social,body.contrast .tab.cat-verbo,body.contrast .tab.cat-persona,
+body.contrast .tab.cat-lugar,body.contrast .tab.cat-objeto,body.contrast .tab.cat-descriptor,
+body.contrast .tab.cat-cuerpo,body.contrast .tab.cat-frase{background:var(--card);border-color:#fff}
 body.contrast button.primary{color:#111}
 body.contrast .aiBubble{background:#111;border-left-color:#ffeb3b}
 .lockBtn{min-height:44px;min-width:44px;border-radius:50%;background:#eef2f7;font-size:1.25rem;padding:0;display:flex;align-items:center;justify-content:center;flex:none;transition:background .15s,transform .15s}
