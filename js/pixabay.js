@@ -9,6 +9,15 @@
    nunca en el código del repositorio público.
    ============================================================ */
 
+async function fetchPixabay(q, lang) {
+  const url = "https://pixabay.com/api/?key=" + encodeURIComponent(settings.pixabayApiKey)
+    + "&q=" + encodeURIComponent(q) + "&lang=" + lang + "&image_type=photo&safesearch=true&order=popular&per_page=12";
+  const res = await fetch(url);
+  if (!res.ok) return null;
+  const json = await res.json();
+  return json.hits || [];
+}
+
 async function searchPixabay() {
   const q = document.getElementById("pixabayQuery").value.trim();
   const box = document.getElementById("pixabayResults");
@@ -19,15 +28,21 @@ async function searchPixabay() {
   }
   box.innerHTML = '<div class="mini">Buscando fotos...</div>';
   try {
-    const url = "https://pixabay.com/api/?key=" + encodeURIComponent(settings.pixabayApiKey)
-      + "&q=" + encodeURIComponent(q) + "&lang=es&image_type=photo&safesearch=true&per_page=12";
-    const res = await fetch(url);
-    if (!res.ok) {
+    let hits = await fetchPixabay(q, "es");
+    if (hits === null) {
       box.innerHTML = '<div class="mini">Pixabay no respondió bien. Revisa que la clave sea correcta.</div>';
       return;
     }
-    const json = await res.json();
-    const hits = json.hits || [];
+    /* El catálogo en inglés es mucho más amplio y suele dar fotos más
+       "normales" y reconocibles. Si en español salen pocas, se completa
+       también con inglés (sin duplicar las mismas fotos). */
+    if (hits.length < 6) {
+      const hitsEn = await fetchPixabay(q, "en");
+      if (hitsEn) {
+        const known = new Set(hits.map(h => h.id));
+        hits = hits.concat(hitsEn.filter(h => !known.has(h.id)));
+      }
+    }
     if (!hits.length) {
       box.innerHTML = '<div class="mini">Sin resultados. Prueba con otra palabra (en español o inglés).</div>';
       return;
