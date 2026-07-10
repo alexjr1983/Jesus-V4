@@ -14,6 +14,7 @@ function applySettings() {
   document.getElementById("rateRange").value = settings.rate;
   document.getElementById("aiEnabledCheck").checked = !!settings.aiEnabled;
   document.getElementById("aiApiKeyInput").value = settings.aiApiKey || "";
+  document.getElementById("pixabayApiKeyInput").value = settings.pixabayApiKey || "";
   const cols = "repeat(" + settings.cols + ", minmax(0,1fr))";
   document.getElementById("items").style.gridTemplateColumns = cols;
   document.getElementById("predictions").style.gridTemplateColumns = cols;
@@ -338,6 +339,21 @@ function addOrUpdateItem() {
   const speech = document.getElementById("editSpeech").value.trim() || name;
   const icon = document.getElementById("editEmoji").value.trim() || "⭐";
   if (!name) { alert("Escribe un nombre."); return; }
+  /* Salvaguarda anti-duplicados: si NO estás editando una tarjeta ya
+     existente (no se pulsó ✏️) y el nombre coincide con una tarjeta
+     que ya existe en esa categoría, esto evita crear una segunda
+     tarjeta con el mismo nombre (ej. "Papá") donde la foto nueva se
+     guardaría en la tarjeta duplicada mientras la original se queda
+     tal cual con su icono, dando la sensación de que "no se guardó". */
+  if (!editingId) {
+    const norm = s => (s || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
+    const existing = (data.items[cat] || []).find(x => norm(x.name) === norm(name));
+    if (existing) {
+      const seguir = confirm(`Ya existe "${existing.name}" en esta categoría. Voy a actualizar esa tarjeta (no crear una nueva) para que la foto quede en el sitio correcto. ¿Continuar?`);
+      if (!seguir) return;
+      editingId = existing.id;
+    }
+  }
   const id = editingId || slug(name);
   const item = { id, name, speech, icon, photo: photoBuffer, action: "" };
   const arr = data.items[cat] ||= [];
@@ -347,8 +363,10 @@ function addOrUpdateItem() {
   saveData(); photoBuffer = ""; editingId = null;
   document.getElementById("editName").value = ""; document.getElementById("editSpeech").value = "";
   document.getElementById("editEmoji").value = ""; document.getElementById("editPhoto").value = "";
+  document.getElementById("editPhotoCamera").value = "";
   document.getElementById("photoPreview").removeAttribute("src");
   document.getElementById("arasaacResults").innerHTML = "";
+  document.getElementById("pixabayResults").innerHTML = "";
   renderItems(); renderPredictions(); renderEditorList();
   setAI("Elemento guardado. Ya puedes usarlo.");
   speak("Elemento guardado.");
@@ -357,8 +375,10 @@ function cancelEdit() {
   editingId = null; photoBuffer = "";
   document.getElementById("editName").value = ""; document.getElementById("editSpeech").value = "";
   document.getElementById("editEmoji").value = ""; document.getElementById("editPhoto").value = "";
+  document.getElementById("editPhotoCamera").value = "";
   document.getElementById("photoPreview").removeAttribute("src");
   document.getElementById("arasaacResults").innerHTML = "";
+  document.getElementById("pixabayResults").innerHTML = "";
 }
 function renderEditorList() {
   const cat = document.getElementById("editCat").value;
@@ -537,6 +557,11 @@ function saveAiKey() {
   settings.aiApiKey = document.getElementById("aiApiKeyInput").value.trim();
   saveSettings();
   alert("Clave guardada solo en este dispositivo.");
+}
+function savePixabayKey() {
+  settings.pixabayApiKey = document.getElementById("pixabayApiKeyInput").value.trim();
+  saveSettings();
+  alert("Clave de Pixabay guardada solo en este dispositivo.");
 }
 
 /* ---------- Gesto: deslizar para cambiar de categoría ----------

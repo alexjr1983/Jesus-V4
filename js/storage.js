@@ -74,7 +74,7 @@ async function saveDiaryData(d) {
 
 /* ---------- Ajustes (tamaño, contraste, columnas, voz, barrido) ---------- */
 function defaultSettings() {
-  return { scale: 1, contrast: false, cols: 4, scanSpeed: 1600, voiceURI: "", rate: 0.9, pin: "", aiEnabled: false, aiApiKey: "" };
+  return { scale: 1, contrast: false, cols: 4, scanSpeed: 1600, voiceURI: "", rate: 0.9, pin: "", aiEnabled: false, aiApiKey: "", pixabayApiKey: "" };
 }
 function loadSettings() {
   try { return Object.assign(defaultSettings(), JSON.parse(localStorage.getItem("jesus_settings") || "{}")); }

@@ -35,6 +35,7 @@ function init() {
     document.addEventListener("visibilitychange", () => { if (document.hidden && caregiverMode) exitCaregiverMode(); });
 
     document.getElementById("editPhoto").addEventListener("change", handlePhoto);
+    document.getElementById("editPhotoCamera").addEventListener("change", handlePhoto);
     document.getElementById("importFile").addEventListener("change", importData);
     document.getElementById("sizeSelect").addEventListener("change", e => { settings.scale = parseFloat(e.target.value); saveSettings(); applySettings(); });
     document.getElementById("colsSelect").addEventListener("change", e => { settings.cols = parseInt(e.target.value); saveSettings(); applySettings(); });
