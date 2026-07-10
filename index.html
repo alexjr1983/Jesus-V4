@@ -203,6 +203,13 @@
       <button onclick="saveAiKey()">💾 Guardar clave</button>
     </div>
     <hr>
+    <label>🖼️ Búsqueda de fotos en internet (Pixabay)</label>
+    <div class="mini">Para buscar fotos reales (comida, deportes, objetos...) al añadir una tarjeta, hace falta una clave gratuita de Pixabay. Se pide en pixabay.com/api/docs (cuenta gratis) y se guarda solo en este móvil.</div>
+    <div class="row" style="margin-top:6px">
+      <input type="password" id="pixabayApiKeyInput" placeholder="Clave API de Pixabay" style="flex:1;min-width:200px">
+      <button onclick="savePixabayKey()">💾 Guardar clave</button>
+    </div>
+    <hr>
     <label>👪 Perfil de Jesús</label>
     <div class="mini">Esto no es vocabulario, es lo que sabemos de su vida real: quién le rodea, dónde suele estar y cómo es su semana. Con esto irá aprendiendo a predecir mejor lo que necesita.</div>
 
@@ -295,8 +302,24 @@
     </div>
     <div id="arasaacResults" class="grid" style="grid-template-columns:repeat(4,1fr);margin-top:6px"></div>
     <div class="mini">Pictogramas: ARASAAC (Gobierno de Aragón) · Autor Sergio Palao · Licencia CC BY-NC-SA</div>
+
+    <label style="margin-top:8px">O buscar una foto real en internet (comida, deportes, objetos...)</label>
+    <div class="row">
+      <input id="pixabayQuery" placeholder="Ej. manzana, baloncesto, piscina..." style="flex:1;min-width:160px">
+      <button onclick="searchPixabay()">🔍 Buscar foto</button>
+    </div>
+    <div id="pixabayResults" class="grid" style="grid-template-columns:repeat(4,1fr);margin-top:6px"></div>
+    <div class="mini">Fotos: Pixabay (banco de imágenes libres de derechos). Se descargan y quedan guardadas en el móvil.</div>
+
     <label style="margin-top:8px">O foto desde el móvil</label>
-    <input type="file" id="editPhoto" accept="image/*" />
+    <div class="row">
+      <label class="good miniBtn" style="cursor:pointer">📷 Tomar foto ahora
+        <input type="file" id="editPhotoCamera" accept="image/*" capture="environment" class="hidden" />
+      </label>
+      <label class="miniBtn" style="cursor:pointer">🖼️ Elegir de la galería
+        <input type="file" id="editPhoto" accept="image/*" class="hidden" />
+      </label>
+    </div>
     <div class="row">
       <img id="photoPreview" class="photoPreview" alt="">
       <span class="mini">La foto se guarda en este navegador (almacén ampliado). Exporta datos para hacer copia de seguridad.</span>
@@ -322,6 +345,7 @@
 <script src="js/speech.js"></script>
 <script src="js/scan.js"></script>
 <script src="js/arasaac.js"></script>
+<script src="js/pixabay.js"></script>
 <script src="js/ui.js"></script>
 <script src="js/game.js"></script>
 <script src="js/app.js"></script>
