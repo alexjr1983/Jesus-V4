@@ -1,11 +1,41 @@
-// numerosGame.js
-// Mini-juego "Números 1-5": Jesús ve una cantidad de objetos y toca
-// el numeral correcto entre varias opciones. Usa gamesCore.js.
-// No toca IndexedDB de fotos ni pictogramas guardados.
+/* ============================================================
+   numerosGame.js — Juego "Números 1-5"
+
+   Jesús ve una cantidad de objetos y toca el numeral correcto
+   entre varias opciones. Usa gamesCore.js para la dificultad
+   adaptativa (sube con aciertos seguidos, baja con errores).
+
+   A propósito NO usa openSheet()/closeSheet(): esas funciones
+   requieren Modo Cuidador activo (ver ui.js), y este juego es
+   justo lo contrario, para que lo use Jesús solo — igual que
+   openGame()/closeGame() en game.js.
+   ============================================================ */
 
 var OBJETO_A_CONTAR = '🏀';
 var motorNumeros = crearMotorDificultad('numeros');
 var numeroObjetivoActual = 1;
+
+var FRASES_REFUERZO = ['¡Bien!', '¡Bravo!', '¡Muy bien!', '¡Genial!', '¡Eso es!'];
+
+function reproducirAudioRefuerzo() {
+  var frase = FRASES_REFUERZO[Math.floor(Math.random() * FRASES_REFUERZO.length)];
+  if (typeof speak === 'function') speak(frase);
+  if (navigator.vibrate) navigator.vibrate([15, 40, 15]);
+}
+
+/* ---------- Abrir / cerrar el juego ---------- */
+function openNumeros() {
+  var el = document.getElementById('numerosPanel');
+  if (!el) return;
+  el.classList.add('open');
+  if (navigator.vibrate) navigator.vibrate(15);
+  iniciarJuegoNumeros();
+}
+function closeNumeros() {
+  var el = document.getElementById('numerosPanel');
+  if (el) el.classList.remove('open');
+  if ('speechSynthesis' in window) speechSynthesis.cancel();
+}
 
 function numeroAleatorioNumeros(max) {
   return Math.floor(Math.random() * max) + 1;
@@ -27,19 +57,19 @@ function renderRondaNumeros(cantidad, opciones) {
   var objetos = '';
   for (var i = 0; i < cantidad; i++) objetos += OBJETO_A_CONTAR + ' ';
 
-  var html = '<div class="gameAiRow">' +
+  contenedor.innerHTML =
+    '<div class="gameAiRow">' +
     '<div class="gameAvatar">🔢</div>' +
-    '<div class="aiBubble">¿Cuántos hay?</div>' +
+    '<div class="aiBubble" id="numerosBubble">¿Cuántos hay?</div>' +
     '</div>' +
     '<div style="font-size:2rem;text-align:center;margin:14px 0">' + objetos + '</div>' +
     '<div id="numerosOpciones" class="grid" style="margin-top:10px"></div>';
-
-  contenedor.innerHTML = html;
 
   var opcionesDiv = document.getElementById('numerosOpciones');
   opciones.forEach(function (op) {
     var boton = document.createElement('button');
     boton.textContent = op;
+    boton.className = 'cardbtn';
     boton.style.fontSize = '1.5rem';
     boton.setAttribute('data-valor', op);
     boton.onclick = function () { manejarRespuestaNumeros(boton); };
@@ -50,15 +80,18 @@ function renderRondaNumeros(cantidad, opciones) {
 function manejarRespuestaNumeros(boton) {
   var valorElegido = parseInt(boton.getAttribute('data-valor'), 10);
   var esCorrecto = valorElegido === numeroObjetivoActual;
+  var bubble = document.getElementById('numerosBubble');
 
   if (esCorrecto) {
     motorNumeros.registrarAcierto();
-    if (typeof reproducirAudioRefuerzo === 'function') reproducirAudioRefuerzo();
+    boton.classList.add('gameCorrect');
+    if (bubble) bubble.textContent = '🎉 ¡Correcto!';
+    reproducirAudioRefuerzo();
     setTimeout(generarRondaNumeros, 1200);
   } else {
     motorNumeros.registrarError();
-    boton.style.opacity = '0.5';
-    setTimeout(function () { boton.style.opacity = '1'; }, 800);
+    boton.classList.add('gameWrong');
+    setTimeout(function () { boton.classList.remove('gameWrong'); }, 450);
   }
 }
 
@@ -71,7 +104,6 @@ function generarRondaNumeros() {
   renderRondaNumeros(numeroObjetivoActual, opciones);
 }
 
-// Función global: la llama el botón de "Jugar a Números" en index.html
 function iniciarJuegoNumeros() {
   motorNumeros.reiniciarRachas();
   generarRondaNumeros();
