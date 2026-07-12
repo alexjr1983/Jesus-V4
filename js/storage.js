@@ -72,6 +72,21 @@ async function saveDiaryData(d) {
   catch (e) { try { localStorage.setItem("jesus_diary", JSON.stringify(d)); } catch (e2) {} }
 }
 
+/* ---------- Frases guardadas/favoritas ----------
+   Se guarda cada frase como la lista de tokens que la forman (igual
+   que "sentence" en app.js) más el texto hablado, para poder tanto
+   repetirla en voz alta con un toque como volver a montarla en la
+   barra de frase si Jesús quiere seguir construyendo desde ahí. */
+async function loadFavorites() {
+  try { const f = await idbGet("favorites"); if (Array.isArray(f)) return f; } catch (e) {}
+  try { const old = localStorage.getItem("jesus_favorites"); if (old) return JSON.parse(old); } catch (e) {}
+  return [];
+}
+async function saveFavoritesData(f) {
+  try { await idbSet("favorites", f); }
+  catch (e) { try { localStorage.setItem("jesus_favorites", JSON.stringify(f)); } catch (e2) {} }
+}
+
 /* ---------- Ajustes (tamaño, contraste, columnas, voz, barrido) ---------- */
 function defaultSettings() {
   return { scale: 1, contrast: false, cols: 4, scanSpeed: 1600, voiceURI: "", rate: 0.9, pin: "", aiEnabled: false, aiApiKey: "", pixabayApiKey: "" };

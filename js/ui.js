@@ -48,7 +48,7 @@ function setMode(m, talk = true) {
 }
 function friendTalk() {
   const hour = new Date().getHours();
-  let text = "Hola Jesús. ";
+  let text = "Hola Jesús, soy MatIA. ";
   if (mode === "school") text += hour < 14 ? "Hoy toca colegio. ¿Cómo estás esta mañana?" : "Hoy has tenido colegio. ¿Quieres contar qué ha pasado?";
   if (mode === "home") text += "Hoy es día de casa o descanso. ¿Qué te apetece hacer?";
   if (mode === "bad") text += "Veo que puede ser un día difícil. Puedes decirme si te duele algo o si estás nervioso.";
@@ -125,6 +125,59 @@ function autoSpeakAndRespond() {
 function speakSentence() { autoSpeakAndRespond(); }
 function removeLast() { sentence.pop(); renderSentence(); renderPredictions(); }
 function clearSentence() { sentence = []; lastIntent = null; lastRealId = null; awaitingModifiers = false; renderSentence(); renderPredictions(); }
+
+/* ---------- Frases guardadas/favoritas ----------
+   Guarda la frase que Jesús tiene montada ahora mismo en la barra
+   para poder repetirla con un solo toque más adelante (p.ej. frases
+   que usa a diario: "quiero agua", "quiero ir al baño"...). No se
+   guarda automáticamente: es un botón aparte, para no llenar la
+   lista de frases sueltas sin querer. */
+function saveFavoritePhrase() {
+  if (!sentence.length) return;
+  const text = sentence.map(x => x.speech || x.name).join(" ");
+  const already = favorites.some(f => f.text === text);
+  if (already) { setAI("Esa frase ya está guardada en Favoritos."); return; }
+  favorites.push({
+    id: "fav_" + Date.now(),
+    text,
+    tokens: sentence.map(x => ({ id: x.id, name: x.name, speech: x.speech, icon: x.icon, photo: x.photo }))
+  });
+  saveFavoritesData(favorites);
+  renderFavorites();
+  setAI("Frase guardada en Favoritos: " + text);
+  if (navigator.vibrate) navigator.vibrate([15, 40, 15]);
+}
+function deleteFavoritePhrase(id) {
+  favorites = favorites.filter(f => f.id !== id);
+  saveFavoritesData(favorites);
+  renderFavorites();
+}
+/* Tocar una frase guardada la dice en voz alta directamente (uso
+   rápido, sin Modo Cuidador). También la deja montada en la barra
+   de frase por si Jesús quiere seguir añadiendo algo más a partir
+   de ahí. */
+function useFavoritePhrase(id) {
+  const fav = favorites.find(f => f.id === id);
+  if (!fav) return;
+  sentence = fav.tokens.map(t => ({ ...t }));
+  renderSentence();
+  renderPredictions();
+  speak(fav.text);
+  if (navigator.vibrate) navigator.vibrate(10);
+}
+function renderFavorites() {
+  const box = document.getElementById("favoritesList");
+  if (!box) return;
+  if (!favorites.length) {
+    box.innerHTML = '<div class="mini">Aún no hay frases guardadas. Monta una frase y toca "⭐ Guardar frase".</div>';
+    return;
+  }
+  box.innerHTML = favorites.map(f => `
+    <div class="itemRow">
+      <button class="cardbtn" style="min-height:56px;flex:1;text-align:left" onclick="useFavoritePhrase('${f.id}')">⭐ ${escapeHtml(f.text)}</button>
+      <button class="miniBtn danger" onclick="deleteFavoritePhrase('${f.id}')">🗑️</button>
+    </div>`).join("");
+}
 
 /* ---------- Categorías / tarjetas ---------- */
 /* Colores por función gramatical (ver data.js: CAT_TYPE_LABELS y

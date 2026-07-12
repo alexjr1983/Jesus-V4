@@ -1,14 +1,14 @@
 /* ============================================================
-   game.js — Juego "¿Qué busca Mat-IA?"
+   game.js — Juego "¿Qué busca MatIA?"
 
-   Mat-IA nombra en voz alta un picto que Jesús ya conoce; Jesús
+   MatIA nombra en voz alta un picto que Jesús ya conoce; Jesús
    tiene que encontrarlo entre varias opciones de su misma
    categoría (mismo color, para no romper el código visual del
    resto de la app). Cada acierto:
-     1) celebra con Mat-IA (rebote + confeti ligero + sonido),
+     1) celebra con MatIA (rebote + confeti ligero + sonido),
      2) suma un balón a su colección, que se guarda para siempre.
 
-   No hay fallos "malos": si se equivoca, Mat-IA anima a seguir
+   No hay fallos "malos": si se equivoca, MatIA anima a seguir
    intentándolo. Tras dos fallos en la misma ronda, se resalta la
    respuesta correcta en vez de dejar a Jesús atascado.
 
@@ -17,8 +17,16 @@
    construir frases reales.
    ============================================================ */
 
-const MASCOT_NAME = "Mat-IA";
+const MASCOT_NAME = "MatIA";
 const GAME_EXCLUDED_CATS = ["dolor"]; // vocabulario de dolor/cuerpo fuera del juego, a propósito
+
+/* Mismo patrón que gamesCore/numerosGame: varias frases de refuerzo
+   alternando al azar, en vez de repetir siempre la misma, para que
+   no se vuelva predecible ni "de máquina". */
+const GAME_FRASES_REFUERZO = ["🎉 ¡Muy bien!", "🎉 ¡Bravo!", "🎉 ¡Genial!", "🎉 ¡Eso es!", "🎉 ¡Perfecto!"];
+function fraseRefuerzoAleatoria() {
+  return GAME_FRASES_REFUERZO[Math.floor(Math.random() * GAME_FRASES_REFUERZO.length)];
+}
 
 let gameBalls = 0;
 let gameRound = null;   // { catId, targetId, optionIds }
@@ -151,7 +159,7 @@ function gamePick(id) {
     renderBallCounter();
     pulseBallCounter();
     celebrateGameWin();
-    if (bubble) bubble.textContent = "🎉 ¡Muy bien! Balón conseguido.";
+    if (bubble) bubble.textContent = fraseRefuerzoAleatoria() + " Balón conseguido.";
     setTimeout(nextGameRound, 1500);
   } else {
     gameMisses++;
