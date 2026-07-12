@@ -73,8 +73,8 @@
     <div class="panel gameLaunchPanel">
       <div class="row" style="justify-content:space-between;align-items:center;flex-wrap:nowrap">
         <div>
-          <div class="small"><b>🎮 Jugar con Mat-IA</b></div>
-          <div class="mini">Encuentra el picto que busca Mat-IA y gana balones.</div>
+          <div class="small"><b>🎮 Jugar con MatIA</b></div>
+          <div class="mini">Encuentra el picto que busca MatIA y gana balones.</div>
         </div>
         <div class="row" style="flex-wrap:nowrap">
           <span id="ballCounter" class="ballBadge">🏀 0</span>
@@ -90,7 +90,7 @@
           <div class="mini">Cuenta los balones y toca el número correcto.</div>
         </div>
         <div class="row" style="flex-wrap:nowrap">
-          <button class="primary" onclick="openNumeros()">▶️ Jugar</button>
+          <button class="primary" onclick="openSheet('numerosPanel'); iniciarJuegoNumeros()">▶️ Jugar</button>
         </div>
       </div>
     </div>
@@ -112,7 +112,13 @@
         <button onclick="removeLast()">↩️ Borrar último</button>
         <button onclick="clearSentence()">🧹 Borrar todo</button>
         <button onclick="saveDiary()">💾 Guardar en diario</button>
+        <button onclick="saveFavoritePhrase()">⭐ Guardar frase</button>
       </div>
+    </div>
+
+    <div class="panel">
+      <div class="small"><b>⭐ Frases guardadas</b> — toca una para decirla al momento.</div>
+      <div id="favoritesList" style="margin-top:8px"></div>
     </div>
 
     <div class="panel">
@@ -143,26 +149,26 @@
   <button id="scanSelectBtn" class="hidden scanSelectBtn" onclick="scanSelect()">✅</button>
 </div>
 
-<!-- ============ Juego "¿Qué busca Mat-IA?" ============
+<!-- ============ Juego "¿Qué busca MatIA?" ============
      Ojo: a diferencia de las hojas de Modo Cuidador, esta pantalla
      NO está protegida por PIN — es Jesús quien la usa directamente. -->
 <div class="sheet gameSheet" id="gamePanel">
   <div class="sheet-header">
     <button class="sheet-back" onclick="closeGame()">←</button>
-    <h2>🎮 ¿Qué busca Mat-IA?</h2>
+    <h2>🎮 ¿Qué busca MatIA?</h2>
     <span id="gameBallCounter" class="ballBadge" style="margin-left:auto">🏀 0</span>
   </div>
   <div class="sheet-body">
     <div class="gameAiRow">
       <div class="gameAvatar" id="gameAvatar">🏀</div>
-      <div class="aiBubble" id="gameBubble">Mat-IA está pensando...</div>
+      <div class="aiBubble" id="gameBubble">MatIA está pensando...</div>
     </div>
     <div id="gameBoard" class="grid" style="margin-top:14px"></div>
   </div>
 </div>
 
 <!-- ============ Juego "Números 1-5" ============
-     Igual que el juego de Mat-IA, sin PIN, de uso directo por Jesús. -->
+     Igual que el juego de MatIA, sin PIN, de uso directo por Jesús. -->
 <div class="sheet gameSheet" id="numerosPanel">
   <div class="sheet-header">
     <button class="sheet-back" onclick="closeNumeros()">←</button>
