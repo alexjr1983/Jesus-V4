@@ -1,112 +1,78 @@
-/**
- * numerosGame.js
- * Mini-juego "Números 1-5": Jesús ve una cantidad de objetos (pictogramas
- * repetidos, ej. balones 🏀) y debe tocar el numeral correcto entre varias
- * opciones. Usa el motor de dificultad compartido (gamesCore.js).
- *
- * No toca IndexedDB de fotos ni pictogramas guardados: usa un emoji/objeto
- * simple como elemento a contar, configurable abajo.
- *
- * Integración esperada en index.html:
- *   <div id="numeros-juego-contenedor"></div>
- *   <script type="module" src="js/numerosGame.js"></script>
- *
- * Y en el módulo de navegación existente, añadir una entrada de menú que
- * llame a iniciarJuegoNumeros() cuando Jesús seleccione este juego.
- */
+// numerosGame.js
+// Mini-juego "Números 1-5": Jesús ve una cantidad de objetos y toca
+// el numeral correcto entre varias opciones. Usa gamesCore.js.
+// No toca IndexedDB de fotos ni pictogramas guardados.
 
-import { crearMotorDificultad, opcionesSegunNivel } from './gamesCore.js';
+var OBJETO_A_CONTAR = '🏀';
+var motorNumeros = crearMotorDificultad('numeros');
+var numeroObjetivoActual = 1;
 
-const OBJETO_A_CONTAR = '🏀'; // fácil de cambiar por otro pictograma si se prefiere
-const CONTENEDOR_ID = 'numeros-juego-contenedor';
-
-const motor = crearMotorDificultad({ juego: 'numeros' });
-
-let numeroObjetivo = 1;
-
-function numeroAleatorio(max) {
+function numeroAleatorioNumeros(max) {
   return Math.floor(Math.random() * max) + 1;
 }
 
-function generarRonda() {
-  const nivel = motor.getNivel();
-  const maxNumero = nivel === 1 ? 3 : 5; // nivel 1: solo hasta 3, niveles 2-3: hasta 5
-  numeroObjetivo = numeroAleatorio(maxNumero);
-
-  const cantidadOpciones = opcionesSegunNivel(nivel);
-  const opciones = generarOpciones(numeroObjetivo, maxNumero, cantidadOpciones);
-
-  renderRonda(numeroObjetivo, opciones);
+function generarOpcionesNumeros(correcto, maxNumero, cantidad) {
+  var set = [correcto];
+  while (set.length < cantidad) {
+    var candidato = numeroAleatorioNumeros(maxNumero);
+    if (set.indexOf(candidato) === -1) set.push(candidato);
+  }
+  return set.sort(function () { return Math.random() - 0.5; });
 }
 
-function generarOpciones(correcto, maxNumero, cantidad) {
-  const set = new Set([correcto]);
-  while (set.size < cantidad) {
-    const candidato = numeroAleatorio(maxNumero);
-    set.add(candidato);
-  }
-  // Mezclar orden para que la respuesta correcta no esté siempre en la misma posición
-  return Array.from(set).sort(() => Math.random() - 0.5);
-}
+function renderRondaNumeros(cantidad, opciones) {
+  var contenedor = document.getElementById('numeros-juego-contenedor');
+  if (!contenedor) return;
 
-function renderRonda(cantidad, opciones) {
-  const contenedor = document.getElementById(CONTENEDOR_ID);
-  if (!contenedor) {
-    console.warn('numerosGame: no se encontró el contenedor', CONTENEDOR_ID);
-    return;
-  }
+  var objetos = '';
+  for (var i = 0; i < cantidad; i++) objetos += OBJETO_A_CONTAR + ' ';
 
-  const objetos = OBJETO_A_CONTAR.repeat(cantidad).split('').join(' ');
+  var html = '<div class="gameAiRow">' +
+    '<div class="gameAvatar">🔢</div>' +
+    '<div class="aiBubble">¿Cuántos hay?</div>' +
+    '</div>' +
+    '<div style="font-size:2rem;text-align:center;margin:14px 0">' + objetos + '</div>' +
+    '<div id="numerosOpciones" class="grid" style="margin-top:10px"></div>';
 
-  contenedor.innerHTML = `
-    <div class="numeros-juego">
-      <div class="numeros-objetos" aria-label="${cantidad} objetos">${objetos}</div>
-      <div class="numeros-opciones">
-        ${opciones
-          .map(
-            (op) =>
-              `<button class="numeros-boton" data-valor="${op}" aria-label="Número ${op}">${op}</button>`
-          )
-          .join('')}
-      </div>
-    </div>
-  `;
+  contenedor.innerHTML = html;
 
-  contenedor.querySelectorAll('.numeros-boton').forEach((boton) => {
-    boton.addEventListener('click', () => manejarRespuesta(boton));
+  var opcionesDiv = document.getElementById('numerosOpciones');
+  opciones.forEach(function (op) {
+    var boton = document.createElement('button');
+    boton.textContent = op;
+    boton.style.fontSize = '1.5rem';
+    boton.setAttribute('data-valor', op);
+    boton.onclick = function () { manejarRespuestaNumeros(boton); };
+    opcionesDiv.appendChild(boton);
   });
 }
 
-function manejarRespuesta(boton) {
-  const valorElegido = parseInt(boton.getAttribute('data-valor'), 10);
-  const esCorrecto = valorElegido === numeroObjetivo;
+function manejarRespuestaNumeros(boton) {
+  var valorElegido = parseInt(boton.getAttribute('data-valor'), 10);
+  var esCorrecto = valorElegido === numeroObjetivoActual;
 
   if (esCorrecto) {
-    boton.classList.add('numeros-correcto');
-    const resultado = motor.registrarAcierto();
-    reproducirRefuerzoPositivo();
-    setTimeout(() => generarRonda(), 1200);
+    motorNumeros.registrarAcierto();
+    if (typeof reproducirAudioRefuerzo === 'function') reproducirAudioRefuerzo();
+    setTimeout(generarRondaNumeros, 1200);
   } else {
-    boton.classList.add('numeros-incorrecto');
-    motor.registrarError();
-    // Se deja la ronda activa para que Jesús pueda intentarlo de nuevo
-    setTimeout(() => boton.classList.remove('numeros-incorrecto'), 800);
+    motorNumeros.registrarError();
+    boton.style.opacity = '0.5';
+    setTimeout(function () { boton.style.opacity = '1'; }, 800);
   }
 }
 
-/**
- * Punto de enganche con el refuerzo de audio aleatorio ya existente en
- * companion.js (si ya está implementado ahí). Si esa función todavía no
- * existe, esta llamada simplemente no hace nada (comprobación segura).
- */
-function reproducirRefuerzoPositivo() {
-  if (typeof window.reproducirAudioRefuerzo === 'function') {
-    window.reproducirAudioRefuerzo();
-  }
+function generarRondaNumeros() {
+  var nivel = motorNumeros.getNivel();
+  var maxNumero = nivel === 1 ? 3 : 5;
+  numeroObjetivoActual = numeroAleatorioNumeros(maxNumero);
+  var cantidadOpciones = opcionesSegunNivel(nivel);
+  var opciones = generarOpcionesNumeros(numeroObjetivoActual, maxNumero, cantidadOpciones);
+  renderRondaNumeros(numeroObjetivoActual, opciones);
 }
 
-/** Función pública para iniciar el juego desde el menú principal */
-export function iniciarJuegoNumeros() {
-  motor.reiniciarRachas();
-  generarRonda();
+// Función global: la llama el botón de "Jugar a Números" en index.html
+function iniciarJuegoNumeros() {
+  motorNumeros.reiniciarRachas();
+  generarRondaNumeros();
 }
