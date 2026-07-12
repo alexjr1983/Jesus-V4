@@ -385,16 +385,32 @@ function renderEditorList() {
   const list = data.items[cat] || [];
   const box = document.getElementById("editorList");
   if (!box) return;
-  box.innerHTML = list.map(it => {
+  box.innerHTML = list.map((it, idx) => {
     const media = it.photo ? `<img class="thumb" src="${it.photo}">` : it.icon;
     return `<div class="itemRow">
       <span class="name">${media} ${escapeHtml(it.name)}</span>
       <span class="row">
+        <button class="miniBtn" onclick="moveItem('${cat}','${it.id}',-1)" ${idx === 0 ? "disabled" : ""} title="Subir posición">⬆️</button>
+        <button class="miniBtn" onclick="moveItem('${cat}','${it.id}',1)" ${idx === list.length - 1 ? "disabled" : ""} title="Bajar posición">⬇️</button>
         <button class="miniBtn" onclick="editItem('${cat}','${it.id}')">✏️</button>
         <button class="miniBtn danger" onclick="deleteItem('${cat}','${it.id}')">🗑️</button>
       </span>
     </div>`;
   }).join("") || '<div class="mini">Sin elementos aún en esta categoría.</div>';
+}
+/* Posiciones fijas para memoria motora: mueve una tarjeta un puesto
+   arriba/abajo dentro de su categoría. El orden que quede aquí es el
+   orden en el que Jesús la verá SIEMPRE en la pantalla principal —
+   nada en la app reordena las tarjetas automáticamente por uso, así
+   que esta es la única forma en que cambia su posición. Útil para
+   igualar el orden que usa en el cole (p.ej. Eneso Verbo). */
+function moveItem(cat, id, dir) {
+  const arr = data.items[cat] || [];
+  const idx = arr.findIndex(x => x.id === id);
+  const swapWith = idx + dir;
+  if (idx < 0 || swapWith < 0 || swapWith >= arr.length) return;
+  [arr[idx], arr[swapWith]] = [arr[swapWith], arr[idx]];
+  saveData(); renderEditorList(); renderItems(); renderPredictions();
 }
 function editItem(cat, id) {
   const it = (data.items[cat] || []).find(x => x.id === id); if (!it) return;
