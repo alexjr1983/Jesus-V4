@@ -63,7 +63,12 @@ function renderRondaNumeros(cantidad, opciones) {
     '<div class="aiBubble" id="numerosBubble">¿Cuántos hay?</div>' +
     '</div>' +
     '<div style="font-size:2rem;text-align:center;margin:14px 0">' + objetos + '</div>' +
-    '<div id="numerosOpciones" class="grid" style="margin-top:10px"></div>';
+    '<div id="numerosOpciones" class="grid" style="margin-top:10px"></div>' +
+    '<div class="row" style="justify-content:center;margin-top:6px">' +
+    '<button class="cardbtn" onclick="repetirPreguntaNumeros()" title="Repetir">🔊 Repetir</button>' +
+    '</div>';
+
+  if (typeof speak === 'function') speak('¿Cuántos hay?');
 
   var opcionesDiv = document.getElementById('numerosOpciones');
   opciones.forEach(function (op) {
@@ -93,6 +98,11 @@ function manejarRespuestaNumeros(boton) {
     boton.classList.add('gameWrong');
     setTimeout(function () { boton.classList.remove('gameWrong'); }, 450);
   }
+}
+
+function repetirPreguntaNumeros() {
+  if (typeof speak === 'function') speak('¿Cuántos hay?');
+  if (navigator.vibrate) navigator.vibrate(15);
 }
 
 function generarRondaNumeros() {
