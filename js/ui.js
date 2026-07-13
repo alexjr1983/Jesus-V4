@@ -48,7 +48,7 @@ function setMode(m, talk = true) {
 }
 function friendTalk() {
   const hour = new Date().getHours();
-  let text = "Hola Jesús, soy MatIA. ";
+  let text = "Hola Jesús. ";
   if (mode === "school") text += hour < 14 ? "Hoy toca colegio. ¿Cómo estás esta mañana?" : "Hoy has tenido colegio. ¿Quieres contar qué ha pasado?";
   if (mode === "home") text += "Hoy es día de casa o descanso. ¿Qué te apetece hacer?";
   if (mode === "bad") text += "Veo que puede ser un día difícil. Puedes decirme si te duele algo o si estás nervioso.";
@@ -111,13 +111,16 @@ function reinforceCompanionColor(item) {
   bubble.style.borderLeftColor = CAT_TYPE_COLORS[t] || CAT_TYPE_COLORS.frase;
 }
 let aiTimer = null;
+let aiRespondToken = 0;
 function autoSpeakAndRespond() {
   const text = sentence.map(x => x.speech || x.name).join(" ");
   if (!text.trim()) return;
   speak(text);
   clearTimeout(aiTimer);
+  const myToken = ++aiRespondToken; // si llega otro toque antes de responder, este queda obsoleto
   aiTimer = setTimeout(async () => {
     const aiReply = await askAiCompanion(text);
+    if (myToken !== aiRespondToken) return; // ya hay un toque más nuevo, no hablar por encima
     if (aiReply) { setAI(aiReply); speak(aiReply); }
     else { setAI("Muy bien, Jesús. Ahora dilo tú también: " + text); speak("Ahora dilo tú"); }
   }, 1600);
@@ -125,59 +128,6 @@ function autoSpeakAndRespond() {
 function speakSentence() { autoSpeakAndRespond(); }
 function removeLast() { sentence.pop(); renderSentence(); renderPredictions(); }
 function clearSentence() { sentence = []; lastIntent = null; lastRealId = null; awaitingModifiers = false; renderSentence(); renderPredictions(); }
-
-/* ---------- Frases guardadas/favoritas ----------
-   Guarda la frase que Jesús tiene montada ahora mismo en la barra
-   para poder repetirla con un solo toque más adelante (p.ej. frases
-   que usa a diario: "quiero agua", "quiero ir al baño"...). No se
-   guarda automáticamente: es un botón aparte, para no llenar la
-   lista de frases sueltas sin querer. */
-function saveFavoritePhrase() {
-  if (!sentence.length) return;
-  const text = sentence.map(x => x.speech || x.name).join(" ");
-  const already = favorites.some(f => f.text === text);
-  if (already) { setAI("Esa frase ya está guardada en Favoritos."); return; }
-  favorites.push({
-    id: "fav_" + Date.now(),
-    text,
-    tokens: sentence.map(x => ({ id: x.id, name: x.name, speech: x.speech, icon: x.icon, photo: x.photo }))
-  });
-  saveFavoritesData(favorites);
-  renderFavorites();
-  setAI("Frase guardada en Favoritos: " + text);
-  if (navigator.vibrate) navigator.vibrate([15, 40, 15]);
-}
-function deleteFavoritePhrase(id) {
-  favorites = favorites.filter(f => f.id !== id);
-  saveFavoritesData(favorites);
-  renderFavorites();
-}
-/* Tocar una frase guardada la dice en voz alta directamente (uso
-   rápido, sin Modo Cuidador). También la deja montada en la barra
-   de frase por si Jesús quiere seguir añadiendo algo más a partir
-   de ahí. */
-function useFavoritePhrase(id) {
-  const fav = favorites.find(f => f.id === id);
-  if (!fav) return;
-  sentence = fav.tokens.map(t => ({ ...t }));
-  renderSentence();
-  renderPredictions();
-  speak(fav.text);
-  if (navigator.vibrate) navigator.vibrate(10);
-}
-function renderFavorites() {
-  const box = document.getElementById("favoritesList");
-  if (!box) return;
-  if (!favorites.length) {
-    box.innerHTML = '<div class="mini">Aún no hay frases guardadas. Monta una frase y toca "⭐ Guardar frase".</div>';
-    return;
-  }
-  box.innerHTML = favorites.map(f => `
-    <div class="itemRow">
-      <button class="cardbtn" style="min-height:56px;flex:1;text-align:left" onclick="useFavoritePhrase('${f.id}')">⭐ ${escapeHtml(f.text)}</button>
-      <button class="miniBtn danger" onclick="deleteFavoritePhrase('${f.id}')">🗑️</button>
-    </div>`).join("");
-}
 
 /* ---------- Categorías / tarjetas ---------- */
 /* Colores por función gramatical (ver data.js: CAT_TYPE_LABELS y
@@ -438,32 +388,16 @@ function renderEditorList() {
   const list = data.items[cat] || [];
   const box = document.getElementById("editorList");
   if (!box) return;
-  box.innerHTML = list.map((it, idx) => {
+  box.innerHTML = list.map(it => {
     const media = it.photo ? `<img class="thumb" src="${it.photo}">` : it.icon;
     return `<div class="itemRow">
       <span class="name">${media} ${escapeHtml(it.name)}</span>
       <span class="row">
-        <button class="miniBtn" onclick="moveItem('${cat}','${it.id}',-1)" ${idx === 0 ? "disabled" : ""} title="Subir posición">⬆️</button>
-        <button class="miniBtn" onclick="moveItem('${cat}','${it.id}',1)" ${idx === list.length - 1 ? "disabled" : ""} title="Bajar posición">⬇️</button>
         <button class="miniBtn" onclick="editItem('${cat}','${it.id}')">✏️</button>
         <button class="miniBtn danger" onclick="deleteItem('${cat}','${it.id}')">🗑️</button>
       </span>
     </div>`;
   }).join("") || '<div class="mini">Sin elementos aún en esta categoría.</div>';
-}
-/* Posiciones fijas para memoria motora: mueve una tarjeta un puesto
-   arriba/abajo dentro de su categoría. El orden que quede aquí es el
-   orden en el que Jesús la verá SIEMPRE en la pantalla principal —
-   nada en la app reordena las tarjetas automáticamente por uso, así
-   que esta es la única forma en que cambia su posición. Útil para
-   igualar el orden que usa en el cole (p.ej. Eneso Verbo). */
-function moveItem(cat, id, dir) {
-  const arr = data.items[cat] || [];
-  const idx = arr.findIndex(x => x.id === id);
-  const swapWith = idx + dir;
-  if (idx < 0 || swapWith < 0 || swapWith >= arr.length) return;
-  [arr[idx], arr[swapWith]] = [arr[swapWith], arr[idx]];
-  saveData(); renderEditorList(); renderItems(); renderPredictions();
 }
 function editItem(cat, id) {
   const it = (data.items[cat] || []).find(x => x.id === id); if (!it) return;
