@@ -35,6 +35,7 @@ const DEFAULT_DATA = {
   ],
   items: {
     nucleo: [
+      i("yo", "Yo", "yo", "🙋‍♂️"),
       i("quiero", "Quiero", "quiero", "🙋", "want"),
       i("mas", "Más", "más", "➕"),
       i("no", "No", "no", "❌"),

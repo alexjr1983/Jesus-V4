@@ -280,6 +280,40 @@ function showDiary() {
 async function clearDiary() {
   if (confirm("¿Borrar el diario de este navegador?")) { diary = []; await saveDiaryData(diary); showDiary(); }
 }
+
+/* ---------- Frases guardadas / favoritas ----------
+   Guarda la frase que Jesús tiene montada ahora mismo para poder
+   repetirla luego con un solo toque, sin tener que reconstruirla. */
+async function saveFavoritePhrase() {
+  if (sentence.length === 0) return;
+  const text = sentence.map(x => x.speech || x.name).join(" ");
+  favorites.unshift({ id: "fav_" + Date.now(), text, items: JSON.parse(JSON.stringify(sentence)) });
+  favorites = favorites.slice(0, 30);
+  await saveFavoritesData(favorites);
+  renderFavorites();
+  setAI("Frase guardada en favoritas.");
+  speak("Frase guardada.");
+  if (navigator.vibrate) navigator.vibrate(15);
+}
+function renderFavorites() {
+  const box = document.getElementById("favoritesList");
+  if (!box) return;
+  if (!favorites.length) { box.innerHTML = '<span class="small">Aún no hay frases guardadas.</span>'; return; }
+  box.innerHTML = favorites.map(f => `
+    <div class="row" style="justify-content:space-between;margin-bottom:6px">
+      <button class="cardbtn" style="flex:1;text-align:left" onclick="speakFavorite('${f.id}')">⭐ ${escapeHtml(f.text)}</button>
+      <button onclick="deleteFavorite('${f.id}')" title="Borrar">🗑️</button>
+    </div>`).join("");
+}
+function speakFavorite(id) {
+  const f = favorites.find(x => x.id === id);
+  if (f) speak(f.text);
+}
+async function deleteFavorite(id) {
+  favorites = favorites.filter(x => x.id !== id);
+  await saveFavoritesData(favorites);
+  renderFavorites();
+}
 function renderStats() {
   const box = document.getElementById("statsBox");
   const usage = data.usage || {};
