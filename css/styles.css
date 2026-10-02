@@ -237,3 +237,22 @@ body.contrast .aiBubble{background:#111;border-left-color:#ffeb3b}
 #coreRow .cardbtn.core{min-height:64px}
 #coreRow .cardbtn.core .sub{display:none}
 .gameAiRow + .grid .cardbtn.gameCard{min-height:84px}
+
+/* ---------- MatIA V8: vistas de Jesús ---------- */
+.v-comunicar,.v-jugar,.v-necesito,.v-frases,.v-comunicar-cg,.v-frases-cg{display:none}
+body[data-view=comunicar] .v-comunicar,body[data-view=jugar] .v-jugar,body[data-view=necesito] .v-necesito,body[data-view=frases] .v-frases{display:block}
+body.cg[data-view=comunicar] .v-comunicar-cg,body.cg[data-view=frases] .v-frases-cg{display:block}
+body:not(.cg) .celebrateBtn{display:none}
+body:not(.cg) .top .small{display:none}
+.bottom .inner .navBtn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:64px;font-size:.95rem;font-weight:700;border-radius:18px;background:#fff;border:2px solid var(--border)}
+.bottom .inner .navBtn span{font-size:1.7rem;line-height:1}
+.bottom .inner .navBtn.active{background:var(--soft);border-color:var(--brand);color:var(--brand)}
+.needGrid{grid-template-columns:repeat(3,minmax(0,1fr))}
+.needBtn{min-height:110px}
+.needBtn .emoji{font-size:2.6rem}
+.needBtn .label{font-size:1rem;font-weight:800}
+.needTitle{font-size:1.25rem;font-weight:800;margin-bottom:10px}
+.needSaid{font-size:2rem;font-weight:800;text-align:center;padding:26px 8px}
+.expandBtn{width:100%;padding:14px;font-size:1.05rem;font-weight:700;border-style:dashed}
+.cardbtn.guide{animation:guidePulse 1s ease-in-out infinite;outline:5px solid #f59e0b;outline-offset:-3px}
+@keyframes guidePulse{50%{transform:scale(1.07)}}
