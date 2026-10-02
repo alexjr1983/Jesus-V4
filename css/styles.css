@@ -181,7 +181,7 @@ hr{border:0;border-top:1px solid var(--border);margin:12px 0}
   box-shadow:0 4px 14px rgba(0,0,0,.35)
 }
 
-/* ---------- Juego "¿Qué busca Mat-IA?" ---------- */
+/* ---------- Juego "¿Qué busca MatIA?" ---------- */
 .ballBadge{background:#fff7ed;border:2px solid #fdba74;color:#9a3412;border-radius:14px;padding:6px 10px;font-weight:800;font-size:.95rem;white-space:nowrap;transition:transform .2s ease}
 .ballBadge.ballPulse{animation:ballPop .5s ease}
 @keyframes ballPop{0%{transform:scale(1)}45%{transform:scale(1.35)}100%{transform:scale(1)}}
@@ -232,3 +232,8 @@ body.contrast .aiBubble{background:#111;border-left-color:#ffeb3b}
 .lockBtn{min-height:44px;min-width:44px;border-radius:50%;background:#eef2f7;font-size:1.25rem;padding:0;display:flex;align-items:center;justify-content:center;flex:none;transition:background .15s,transform .15s}
 .lockBtn.pressing{background:#fde68a;transform:scale(.92)}
 .caregiverBar{display:flex;align-items:center;justify-content:space-between;gap:8px;background:#fef9c3;border:2px solid #f59e0b;font-weight:800}
+
+/* ---------- MatIA V7 ---------- */
+#coreRow .cardbtn.core{min-height:64px}
+#coreRow .cardbtn.core .sub{display:none}
+.gameAiRow + .grid .cardbtn.gameCard{min-height:84px}
