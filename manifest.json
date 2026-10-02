@@ -1,6 +1,6 @@
 {
-  "name": "Comunicador Jesús Next",
-  "short_name": "Jesús",
+  "name": "MatIA",
+  "short_name": "MatIA",
   "description": "Comunicador visual con voz, predicción y diario para uso diario.",
   "start_url": "./index.html",
   "scope": "./",
