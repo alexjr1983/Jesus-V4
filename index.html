@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-title" content="Jesús" />
+<meta name="apple-mobile-web-app-title" content="MatIA" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 <meta name="theme-color" content="#2563eb" />
 <link rel="manifest" href="manifest.json" />
@@ -33,6 +33,7 @@
       <button onclick="openSheet('accessPanel')">🛠️ Ajustes</button>
       <button onclick="openSheet('diaryPanel')">📓 Diario</button>
       <button onclick="openSheet('editorPanel')">⚙️ Editor</button>
+      <button id="backupAlert" onclick="openSheet('editorPanel')" style="display:none">⚠️ Copia pendiente</button>
       <button onclick="changePin()">🔑 PIN</button>
       <button onclick="exitCaregiverMode()" class="dark">🔒 Bloquear</button>
     </div>
@@ -70,7 +71,7 @@
       <button class="celebrateBtn" onclick="celebrateBig()" title="Celebrar un logro importante con Jesús">🎉<span class="celebrateLabel">Celebrar</span></button>
     </div>
 
-    <div class="panel gameLaunchPanel">
+    <div class="panel gameLaunchPanel v-jugar">
       <div class="row" style="justify-content:space-between;align-items:center;flex-wrap:nowrap">
         <div>
           <div class="small"><b>🎮 Jugar con MatIA</b></div>
@@ -83,7 +84,7 @@
       </div>
     </div>
 
-    <div class="panel gameLaunchPanel">
+    <div class="panel gameLaunchPanel v-jugar">
       <div class="row" style="justify-content:space-between;align-items:center;flex-wrap:nowrap">
         <div>
           <div class="small"><b>🔢 Jugar a Números</b></div>
@@ -95,23 +96,23 @@
       </div>
     </div>
 
-    <div class="panel gameLaunchPanel">
+    <div class="panel gameLaunchPanel v-jugar">
       <div class="row" style="justify-content:space-between;align-items:center;flex-wrap:nowrap">
         <div><div class="small"><b>🧩 Memoria</b></div><div class="mini">Encuentra las parejas.</div></div>
         <button class="primary" onclick="openMemoria()">▶️ Jugar</button>
       </div>
     </div>
 
-    <div class="panel gameLaunchPanel">
+    <div class="panel gameLaunchPanel v-jugar">
       <div class="row" style="justify-content:space-between;align-items:center;flex-wrap:nowrap">
         <div><div class="small"><b>🔤 Letras</b></div><div class="mini">¿Con qué letra empieza?</div></div>
         <button class="primary" onclick="openLetras()">▶️ Jugar</button>
       </div>
     </div>
 
-    <div class="panel gameLaunchPanel" id="dailyChallenge"></div>
+    <div class="panel gameLaunchPanel v-jugar" id="dailyChallenge"></div>
 
-    <div class="panel mode">
+    <div class="panel mode v-comunicar-cg">
       <div class="row">
         <button id="schoolBtn" onclick="setMode('school')">🏫 Día lectivo</button>
         <button id="homeBtn" onclick="setMode('home')">🏠 No lectivo</button>
@@ -120,9 +121,10 @@
       </div>
     </div>
 
-    <div class="panel">
+    <div class="panel v-comunicar">
       <div class="small"><b>Frase de Jesús</b> — se ven pictos/fotos grandes, no solo texto.</div>
       <div id="sentence" class="sentence"></div>
+      <div id="expandBox" style="margin-top:8px"></div>
       <div class="row" style="margin-top:10px">
         <button onclick="speakSentence()" class="primary bigSpeak">🔊 Hablar frase</button>
         <button onclick="removeLast()">↩️ Borrar último</button>
@@ -132,21 +134,25 @@
       </div>
     </div>
 
-    <div class="panel">
+    <div class="panel v-necesito"><div id="needBox"></div></div>
+
+    <div class="panel v-frases"><div id="phrasesBox"></div></div>
+
+    <div class="panel v-frases-cg">
       <div class="small"><b>⭐ Frases guardadas</b> — toca una para decirla al momento.</div>
       <div id="favoritesList" style="margin-top:8px"></div>
     </div>
 
-    <div class="panel">
-      <div class="small"><b>Predicción inteligente</b> según modo, hora y lo último que ha tocado.</div>
+    <div class="panel v-comunicar">
+      <div class="small"><b>💡 Quizá quieres…</b></div>
       <div id="predictions" class="grid"></div>
     </div>
 
-    <div class="panel">
+    <div class="panel v-comunicar">
       <div class="tabs" id="tabs"></div>
     </div>
 
-    <div class="panel">
+    <div class="panel v-comunicar">
       <div class="small swipeHint">👉 Desliza a un lado sobre las tarjetas para cambiar de categoría</div>
       <div id="coreRow" class="grid" style="margin-bottom:10px"></div>
       <div id="items" class="grid"></div>
@@ -156,10 +162,10 @@
 
   <div class="bottom">
     <div class="inner">
-      <button onclick="smartStart('wantEat')" class="good">🍽️ Quiero comer</button>
-      <button onclick="smartStart('wantGo')" class="good">🚗 Quiero ir</button>
-      <button onclick="smartStart('wantPerson')" class="good">👨‍👩‍👦 Quiero estar</button>
-      <button onclick="showHelp()" class="warn">🤔 No sé decirlo</button>
+      <button id="nav_comunicar" class="navBtn" onclick="setView('comunicar')"><span>🗣️</span>Comunicar</button>
+      <button id="nav_necesito" class="navBtn" onclick="setView('necesito')"><span>❤️</span>Necesito</button>
+      <button id="nav_frases" class="navBtn" onclick="setView('frases')"><span>⭐</span>Mis frases</button>
+      <button id="nav_jugar" class="navBtn" onclick="setView('jugar')"><span>🎮</span>Jugar</button>
     </div>
   </div>
 
@@ -333,6 +339,8 @@
     <div id="statsBox" class="small" style="margin-top:8px"></div>
     <div id="insightsBox" class="small" style="margin-top:8px"></div>
     <div id="weeklyBox" class="small" style="margin-top:8px"></div>
+    <div id="patternsBox" class="small" style="margin-top:12px"></div>
+    <div class="row" style="margin-top:12px"><button class="primary" onclick="openTherapistReport()">📄 Informe para terapeuta</button></div>
     <div id="diaryBox" class="small" style="margin-top:10px"></div>
   </div>
 </div>
@@ -385,10 +393,11 @@
     <div class="row">
       <button onclick="addOrUpdateItem()" class="good">➕ Añadir / actualizar</button>
       <button onclick="cancelEdit()">✖️ Cancelar edición</button>
-      <button onclick="exportData()">📤 Exportar datos</button>
-      <button onclick="importClick()">📥 Importar datos</button>
+      <button class="primary" onclick="exportData()">📦 Crear copia de seguridad</button>
+      <button onclick="importClick()">📥 Restaurar copia</button>
+      <div id="backupInfo" class="small" style="width:100%"></div>
       <button onclick="deleteLearning()">🧹 Borrar aprendizaje</button>
-      <input type="file" id="importFile" accept="application/json" class="hidden" />
+      <input type="file" id="importFile" accept=".matia,.json,application/json" class="hidden" />
     </div>
     <hr>
     <label>Elementos de esta categoría</label>
@@ -410,6 +419,7 @@
 <script src="js/gamesCore.js"></script>
 <script src="js/numerosGame.js"></script>
 <script src="js/matia-extras.js"></script>
+<script src="js/matia-v8.js"></script>
 <script src="js/app.js"></script>
 </body>
 </html>

@@ -1,3 +1,55 @@
+MatIA — V8: pantalla simple, necesidades y aprendizaje con aceptación
+=====================================================================
+Todo ocurre en el dispositivo. No se envía nada nuevo a ningún servidor.
+
+PARA JESÚS (barra inferior, 4 botones grandes)
+ 🗣️ Comunicar  frase + barra "Quizá quieres…" + categorías (lo de siempre).
+ ❤️ Necesito   "¿Qué quieres?" (comer, beber, baño, descansar, ir, estar con
+               alguien, cariño) y "¿Qué te pasa?" (me duele, cansado,
+               enfadado, triste, ruido, luz, me encuentro mal, quiero estar
+               contigo, no lo sé). Si duele o se encuentra mal, pregunta la
+               zona del cuerpo. Es comunicación de necesidades, NO diagnóstico.
+ ⭐ Mis frases  8 frases esenciales fijas (ayuda, me duele, hambre, sed, baño,
+               cansado, jugar, te quiero) + las guardadas, ordenadas por uso.
+ 🎮 Jugar      los 4 juegos y el reto del día.
+ Se ocultan para Jesús (solo Modo Cuidador): selector de día, Amigo habla,
+ Celebrar y los ajustes.
+
+COMUNICACIÓN
+ - Expansión por reglas: si toca una sola palabra ("agua"), aparece un botón
+   "Decir completo: Quiero agua". Jesús elige entre la frase literal y la completa.
+ - Amigo MatIA local: responde con plantillas, sin internet y sin preguntas de
+   sí/no. El Amigo IA con API sigue existiendo, pero se recomienda dejarlo apagado.
+
+APRENDIZAJE (todo local)
+ - Registro por día de la semana y franja horaria. La barra de sugerencias usa:
+   patrones aceptados → trigramas → contexto día/franja → lo anterior.
+   La cuadrícula NUNCA se reordena sola.
+ - Modo Cuidador > Diario > "Patrones detectados": la app propone ("X se usa
+   sobre todo por la tarde") y el cuidador pulsa "Añadir a predicción" o
+   "Ignorar". Hacen falta unas semanas de uso para que aparezcan.
+ - "Palabra a practicar esta semana" + botón "Mostrar dónde está" (modelado
+   guiado: resalta la categoría y la tarjeta).
+
+PARA EL CUIDADOR / TERAPEUTA
+ - 📄 Informe para terapeuta: vocabulario distinto, proporción de núcleo,
+   palabras nuevas por semana, longitud media de frase (solo frases guardadas
+   en el diario) y necesidades expresadas. Se abre en una pestaña: pulsa
+   "Imprimir / Guardar como PDF". Es orientativo, no un análisis logopédico.
+ - 📦 Copia de seguridad: archivo Jesus_MatIA_backup_AAAA-MM-DD.matia con
+   pictos, fotos, frases, rutinas, aprendizaje y ajustes. NO incluye la clave
+   API ni el PIN. Aviso en el Modo Cuidador si pasan más de 7 días sin copia.
+   "Restaurar copia" acepta .matia y .json de versiones anteriores.
+
+RECOMENDACIÓN iPhone/iPad: instala MatIA en la pantalla de inicio (Safari >
+Compartir > Añadir a pantalla de inicio) y activa Acceso guiado de iOS
+(Ajustes > Accesibilidad > Acceso guiado) para impedir que salga de la app.
+
+NO incluido a propósito: sincronizar vocabulario casa-colegio (decisión
+pendiente aparte), mirada/control ocular, IA en la nube.
+
+Instalar: sube la carpeta ENTERA, incluidos js/matia-v8.js y sw.js nuevos.
+
 MatIA — V7: privacidad local, aprendizaje y juegos nuevos
 ============================================================
 Todo ocurre en el dispositivo. No se envía nada nuevo a ningún servidor.
