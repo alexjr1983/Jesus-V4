@@ -21,6 +21,7 @@ let caregiverMode = false;
 
 function init() {
   (async () => {
+    await restoreSettings();
     data = await loadData();
     diary = await loadDiary();
     profile = await loadProfile();

@@ -95,4 +95,7 @@ function loadSettings() {
   try { return Object.assign(defaultSettings(), JSON.parse(localStorage.getItem("jesus_settings") || "{}")); }
   catch (e) { return defaultSettings(); }
 }
-function saveSettings() { localStorage.setItem("jesus_settings", JSON.stringify(settings)); }
+function saveSettings() {
+  try { localStorage.setItem("jesus_settings", JSON.stringify(settings)); } catch (e) {}
+  try { idbSet("settings", settings).catch(() => {}); } catch (e) {}
+}

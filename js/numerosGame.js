@@ -89,6 +89,7 @@ function manejarRespuestaNumeros(boton) {
 
   if (esCorrecto) {
     motorNumeros.registrarAcierto();
+    if (typeof awardBall === 'function') awardBall();
     boton.classList.add('gameCorrect');
     if (bubble) bubble.textContent = '🎉 ¡Correcto!';
     reproducirAudioRefuerzo();

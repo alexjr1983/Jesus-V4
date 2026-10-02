@@ -88,6 +88,7 @@ function addToken(item) {
       data.sequences[lastRealId] = data.sequences[lastRealId] || {};
       data.sequences[lastRealId][usageId] = (data.sequences[lastRealId][usageId] || 0) + 1;
     }
+    if (typeof learnTransition === "function") learnTransition(usageId);
     lastRealId = usageId;
     saveData();
   }
@@ -529,10 +530,11 @@ function enterCaregiverMode() {
     if (!/^\d{4,8}$/.test(p1) || p1 !== p2) { alert("Los PIN no coinciden o no son válidos (4-8 dígitos)."); return; }
     settings.pin = p1; saveSettings();
     alert("PIN creado. Guárdalo en un lugar seguro.");
+  } else {
+    const entered = prompt("PIN del Modo Cuidador:");
+    if (entered === null) return;
+    if (String(entered).trim() !== String(settings.pin)) { alert("PIN incorrecto."); return; }
   }
-  const entered = prompt("PIN del Modo Cuidador:");
-  if (entered === null) return;
-  if (entered !== settings.pin) { alert("PIN incorrecto."); return; }
   caregiverMode = true;
   updateCaregiverUI();
   fillEditorCats(); renderEditorList();

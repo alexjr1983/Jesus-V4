@@ -93,7 +93,7 @@ function buildRound() {
   const list = data.items[cat.id] || [];
   const target = pickTarget(cat);
   if (!target) return null;
-  const distractors = shuffleArray(list.filter(x => x.id !== target.id)).slice(0, 3);
+  const distractors = shuffleArray(list.filter(x => x.id !== target.id)).slice(0, opcionesSegunNivel(motorBusca.getNivel()) - 1);
   const options = shuffleArray([target, ...distractors]);
   return { catId: cat.id, targetId: target.id, optionIds: options.map(o => o.id) };
 }
@@ -154,15 +154,15 @@ function gamePick(id) {
     gameLocked = true;
     if (chosenEl) chosenEl.classList.add("gameCorrect");
     if (navigator.vibrate) navigator.vibrate([15, 40, 15]);
-    gameBalls++;
-    saveGameBalls();
-    renderBallCounter();
-    pulseBallCounter();
+    motorBusca.registrarAcierto();
+    awardBall();
     celebrateGameWin();
+    setTimeout(reinforce, 500);
     if (bubble) bubble.textContent = fraseRefuerzoAleatoria() + " Balón conseguido.";
     setTimeout(nextGameRound, 1500);
   } else {
     gameMisses++;
+    motorBusca.registrarError();
     if (chosenEl) {
       chosenEl.classList.add("gameWrong");
       setTimeout(() => chosenEl.classList.remove("gameWrong"), 450);
