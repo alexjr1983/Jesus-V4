@@ -11,7 +11,7 @@
 <link rel="manifest" href="manifest.json" />
 <link rel="icon" href="icons/icon-192.png" />
 <link rel="apple-touch-icon" href="icons/icon-192.png" />
-<title>Comunicador Jesús Next</title>
+<title>MatIA</title>
 <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
@@ -20,7 +20,7 @@
   <div class="top">
     <div class="row" style="justify-content:space-between;flex-wrap:nowrap">
       <div>
-        <h1>🧠 Comunicador Jesús Next</h1>
+        <h1>🧠 MatIA</h1>
         <div class="small">Visual, con voz, frases por pictos/fotos, predicción, diario y color por tipo de palabra.</div>
       </div>
       <button id="caregiverLockBtn" class="lockBtn" title="Mantén pulsado 2 segundos para el Modo Cuidador">🔒</button>
@@ -95,6 +95,22 @@
       </div>
     </div>
 
+    <div class="panel gameLaunchPanel">
+      <div class="row" style="justify-content:space-between;align-items:center;flex-wrap:nowrap">
+        <div><div class="small"><b>🧩 Memoria</b></div><div class="mini">Encuentra las parejas.</div></div>
+        <button class="primary" onclick="openMemoria()">▶️ Jugar</button>
+      </div>
+    </div>
+
+    <div class="panel gameLaunchPanel">
+      <div class="row" style="justify-content:space-between;align-items:center;flex-wrap:nowrap">
+        <div><div class="small"><b>🔤 Letras</b></div><div class="mini">¿Con qué letra empieza?</div></div>
+        <button class="primary" onclick="openLetras()">▶️ Jugar</button>
+      </div>
+    </div>
+
+    <div class="panel gameLaunchPanel" id="dailyChallenge"></div>
+
     <div class="panel mode">
       <div class="row">
         <button id="schoolBtn" onclick="setMode('school')">🏫 Día lectivo</button>
@@ -132,6 +148,7 @@
 
     <div class="panel">
       <div class="small swipeHint">👉 Desliza a un lado sobre las tarjetas para cambiar de categoría</div>
+      <div id="coreRow" class="grid" style="margin-bottom:10px"></div>
       <div id="items" class="grid"></div>
     </div>
 
@@ -178,6 +195,15 @@
   <div class="sheet-body">
     <div id="numeros-juego-contenedor"></div>
   </div>
+</div>
+
+<div class="sheet gameSheet" id="extraPanel">
+  <div class="sheet-header">
+    <button class="sheet-back" onclick="closeExtra()">←</button>
+    <h2 id="extraTitle">Juego</h2>
+    <span id="gameBallCounter2" class="ballBadge" style="margin-left:auto"></span>
+  </div>
+  <div class="sheet-body"><div id="extraBoard"></div></div>
 </div>
 
 <!-- ============ Pantallas tipo hoja (Modo Cuidador) ============ -->
@@ -306,6 +332,7 @@
     </div>
     <div id="statsBox" class="small" style="margin-top:8px"></div>
     <div id="insightsBox" class="small" style="margin-top:8px"></div>
+    <div id="weeklyBox" class="small" style="margin-top:8px"></div>
     <div id="diaryBox" class="small" style="margin-top:10px"></div>
   </div>
 </div>
@@ -360,6 +387,7 @@
       <button onclick="cancelEdit()">✖️ Cancelar edición</button>
       <button onclick="exportData()">📤 Exportar datos</button>
       <button onclick="importClick()">📥 Importar datos</button>
+      <button onclick="deleteLearning()">🧹 Borrar aprendizaje</button>
       <input type="file" id="importFile" accept="application/json" class="hidden" />
     </div>
     <hr>
@@ -381,6 +409,7 @@
 <script src="js/game.js"></script>
 <script src="js/gamesCore.js"></script>
 <script src="js/numerosGame.js"></script>
+<script src="js/matia-extras.js"></script>
 <script src="js/app.js"></script>
 </body>
 </html>

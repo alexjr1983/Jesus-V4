@@ -1,3 +1,43 @@
+MatIA — V7: privacidad local, aprendizaje y juegos nuevos
+============================================================
+Todo ocurre en el dispositivo. No se envía nada nuevo a ningún servidor.
+
+1. PIN del Modo Cuidador corregido.
+   Los ajustes (PIN incluido) ahora se guardan también en IndexedDB y se pide
+   al navegador almacenamiento persistente. Antes solo vivían en localStorage,
+   que el móvil puede vaciar, y por eso pedía crear PIN cada vez. Si acaba de
+   crearse el PIN, entra directamente sin pedirlo otra vez.
+   (Causa probable, no confirmada en un móvil real.) Si ya se había perdido el
+   PIN, hay que crearlo una última vez.
+2. Nombre: la app se llama MatIA (título, manifest y textos).
+   Reinstala el acceso directo para que el móvil coja el nombre nuevo.
+3. Posición fija: fila de 4 botones (Sí, No, Más, Ayuda) siempre en el mismo
+   sitio, encima de las tarjetas de cualquier categoría.
+4. Aprendizaje local: registro de uso por día (60 días), predicción con
+   bigramas + trigramas + recencia. Solo cambia la barra de sugerencias.
+5. Favoritas: se ordenan por uso y la app sugiere frases repetidas en el diario.
+6. Balones 🏀: el contador visible es el de HOY y se reinicia solo cada día;
+   el total acumulado se sigue guardando.
+7. Dificultad adaptativa también en "¿Qué busca MatIA?" (2/3/4 opciones).
+8. Juegos nuevos: Memoria (parejas; nivel 3 con palabra escrita) y Letras
+   (vocales; nivel 3, letra inicial).
+9. Refuerzo al acertar: "¡Bien!", "¡Bravo!" o aplauso, al azar.
+10. Reto del día: 3 balones en cualquier juego (oculto en "Día difícil").
+    Interpretación mía del "reto ligero"; la sugerencia de juego rota por día.
+11. Modo Cuidador > Diario: informe de los últimos 7 días (solo lectura).
+12. Exportar incluye ahora favoritas, perfil y balones; el botón
+    "Borrar aprendizaje" elimina predicción y estadísticas sin tocar fotos,
+    vocabulario, diario ni favoritas.
+13. sw.js: service worker con red primero. Las actualizaciones llegan solas y
+    la app abre sin conexión. Cambia VERSION en sw.js en cada entrega.
+
+Instalar: sube la carpeta ENTERA (incluidos js/matia-extras.js y sw.js).
+
+Aviso: ARASAAC/Pixabay (Editor) envían la palabra buscada a esos servicios, y el
+Amigo IA envía texto a Anthropic solo si la familia lo activa con su clave.
+El resto no sale del móvil.
+
+
 COMUNICADOR JESÚS NEXT — V6: juego "¿Qué busca Mat-IA?" + balones
 ============================================================
 
