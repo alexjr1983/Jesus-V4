@@ -147,7 +147,7 @@ const ESSENTIAL = [
   { icon: "🥤", text: "Tengo sed" }, { icon: "🚽", text: "Quiero ir al baño" }, { icon: "😴", text: "Estoy cansado" },
   { icon: "🏀", text: "Quiero jugar" }, { icon: "❤️", text: "Te quiero" }
 ];
-function sayEssential(i) { const e = ESSENTIAL[i]; if (!e) return; logNeed("frase_" + slug(e.text)); speak(e.text); setAI(e.text); }
+function sayEssential(i) { const e = ESSENTIAL[i]; if (!e) return; logNeed("frase_" + i); speak(e.text); setAI(e.text); }
 function renderPhrases() {
   const box = document.getElementById("phrasesBox"); if (!box) return;
   const favs = [...favorites].sort((a, b) => (b.uses || 0) - (a.uses || 0));
@@ -241,10 +241,34 @@ function guideTo(id) {
     document.querySelectorAll("button[onclick*='addById(\"" + id + "\")']").forEach(b => { b.classList.add("guide"); b.scrollIntoView({ block: "center", behavior: "smooth" }); setTimeout(() => b.classList.remove("guide"), 6000); });
   }, 120);
 }
-const _weekReport = weekReport;
+function needLabel(key) {
+  const p = key.split("_"), k = p[0];
+  if (k === "quiero") { const w = WANT.find(x => x.k === p[1]); return "Quiero: " + (w ? w.name.toLowerCase() : p.slice(1).join(" ")); }
+  if (k === "siento") { const f = FEEL.find(x => x.k === p[1]), z = ZONES.find(x => x.k === p[2]); return (f ? f.name : p[1]) + (z ? " (" + z.name.toLowerCase() + ")" : ""); }
+  if (k === "frase") { const e = ESSENTIAL[+p[1]]; return "Frase: " + (e ? e.text : p.slice(1).join(" ")); }
+  if (k === "expandida") return "Frase completa";
+  return key;
+}
 weekReport = function () {
+  const tot = {}, needs = {}; let n = 0;
+  for (let i = 0; i < 7; i++) Object.entries((data.log || {})[dayKey(new Date(Date.now() - i * 864e5))] || {}).forEach(([id, c]) => {
+    if (id.startsWith("n:")) needs[id.slice(2)] = (needs[id.slice(2)] || 0) + c; else { tot[id] = (tot[id] || 0) + c; n += c; }
+  });
+  const nn = Object.values(needs).reduce((a, b) => a + b, 0);
+  if (!n && !nn) return '<div class="mini">Informe semanal: aún no hay datos de esta semana.</div>';
+  const nm = id => (findItem(id) || { name: id }).name;
+  const top = Object.entries(tot).sort((a, b) => b[1] - a[1]).slice(0, 5).map(([id, c]) => escapeHtml(nm(id)) + " (" + c + ")").join(" · ");
+  const seen = new Set(Object.values(data.log || {}).flatMap(m => Object.keys(m)));
+  const idle = (data.items.nucleo || []).filter(x => !seen.has(x.id)).slice(0, 6).map(x => escapeHtml(x.name)).join(", ");
+  const lv = [["Busca", motorBusca], ["Números", motorNumeros], ["Memoria", motorMemoria], ["Letras", motorLetras]].map(([k, m]) => k + " " + m.getNivel()).join(" · ");
+  const needTxt = Object.entries(needs).sort((a, b) => b[1] - a[1]).slice(0, 5).map(([k, c]) => escapeHtml(needLabel(k)) + " (" + c + ")").join(" · ");
   const t = teachNext();
-  return _weekReport() + (t ? `<div style="margin-top:8px">📌 <b>Palabra a practicar esta semana:</b> ${escapeHtml(t.name)} <button onclick="guideTo('${t.id}')" style="margin-left:6px">🎯 Mostrar dónde está</button></div>` : "");
+  return `<b>Informe de los últimos 7 días</b><ul style="margin:6px 0 0 18px"><li>${n} toques en pictos.</li>` +
+    (top ? `<li>Más usadas: ${top}.</li>` : "") +
+    (needTxt ? `<li>Necesidades y frases esenciales: ${needTxt}.</li>` : "") +
+    (idle ? `<li>Núcleo sin usar en 60 días: ${idle}. Valora practicarlas juntos.</li>` : "") +
+    `<li>Nivel en juegos: ${lv}. Balones hoy: ${ballsDay.n} · total: ${gameBalls}.</li></ul><div class="mini">Son datos orientativos; los cambios los decides tú.</div>` +
+    (t ? `<div style="margin-top:8px">📌 <b>Palabra a practicar esta semana:</b> ${escapeHtml(t.name)} <button onclick="guideTo('${t.id}')" style="margin-left:6px">🎯 Mostrar dónde está</button></div>` : "");
 };
 const _renderInsights2 = renderInsights;
 renderInsights = function () { _renderInsights2(); renderPatterns(); };
@@ -266,8 +290,7 @@ function openTherapistReport() {
   const s = therapistStats(), nm = id => (findItem(id) || { name: id }).name;
   const top = Object.entries(s.words).sort((a, b) => b[1] - a[1]).slice(0, 10).map(([id, c]) => `<tr><td>${escapeHtml(nm(id))}</td><td>${c}</td></tr>`).join("");
   const wk = Object.keys(s.wk).sort((a, b) => a - b).map(w => `<tr><td>Semana ${+w + 1}</td><td>${s.wk[w]}</td></tr>`).join("");
-  const needNames = { quiero: "Quiero…", siento: "Qué me pasa", frase: "Frases esenciales", expandida: "Frase completa" };
-  const needs = Object.entries(s.needs).sort((a, b) => b[1] - a[1]).slice(0, 8).map(([k, c]) => `<tr><td>${escapeHtml(needNames[k.split("_")[0]] || "")} · ${escapeHtml(k.split("_").slice(1).join(" ") || k)}</td><td>${c}</td></tr>`).join("");
+  const needs = Object.entries(s.needs).sort((a, b) => b[1] - a[1]).slice(0, 8).map(([k, c]) => `<tr><td>${escapeHtml(needLabel(k))}</td><td>${c}</td></tr>`).join("");
   const html = `<!doctype html><html lang="es"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Informe MatIA</title><style>body{font:15px system-ui,Arial;margin:24px;color:#17202a}h1{font-size:20px}h2{font-size:16px;margin:18px 0 6px}table{border-collapse:collapse;width:100%}td{border-bottom:1px solid #ddd;padding:4px 6px}.note{color:#5f6b7a;font-size:12px;margin-top:18px}button{font-size:16px;padding:10px 16px;margin-bottom:12px}@media print{button{display:none}}</style>
 <button onclick="window.print()">🖨️ Imprimir / Guardar como PDF</button>
 <h1>MatIA · Informe de comunicación</h1><div>Generado el ${new Date().toLocaleDateString("es-ES")} · Periodo con datos: ${s.days.length ? s.days[0] + " a " + s.days[s.days.length - 1] : "sin datos"} (${s.days.length} días con uso)</div>
@@ -305,5 +328,89 @@ importData = function (ev) {
   r.onload = () => { try { const o = JSON.parse(r.result); if (o.settings) { const keep = { aiApiKey: settings.aiApiKey, pixabayApiKey: settings.pixabayApiKey, pin: settings.pin }; Object.assign(settings, o.settings, keep); saveSettings(); applySettings(); } } catch (e) {} };
   r.readAsText(f);
 };
+
+/* ---------- Parche del HTML por JavaScript ----------
+   Así la V8 funciona aunque index.html y styles.css sean de la V7:
+   basta con subir js/app.js y js/matia-v8.js. Si el HTML ya es el nuevo,
+   no hace nada. */
+const MATIA_CSS = `/* ---------- MatIA V7 ---------- */
+#coreRow .cardbtn.core{min-height:64px}
+#coreRow .cardbtn.core .sub{display:none}
+.gameAiRow + .grid .cardbtn.gameCard{min-height:84px}
+
+/* ---------- MatIA V8: vistas de Jesús ---------- */
+.v-comunicar,.v-jugar,.v-necesito,.v-frases,.v-comunicar-cg,.v-frases-cg{display:none}
+body[data-view=comunicar] .v-comunicar,body[data-view=jugar] .v-jugar,body[data-view=necesito] .v-necesito,body[data-view=frases] .v-frases{display:block}
+body.cg[data-view=comunicar] .v-comunicar-cg,body.cg[data-view=frases] .v-frases-cg{display:block}
+body:not(.cg) .celebrateBtn{display:none}
+body:not(.cg) .top .small{display:none}
+.bottom .inner .navBtn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:64px;font-size:.95rem;font-weight:700;border-radius:18px;background:#fff;border:2px solid var(--border)}
+.bottom .inner .navBtn span{font-size:1.7rem;line-height:1}
+.bottom .inner .navBtn.active{background:var(--soft);border-color:var(--brand);color:var(--brand)}
+.needGrid{grid-template-columns:repeat(3,minmax(0,1fr))}
+.needBtn{min-height:110px}
+.needBtn .emoji{font-size:2.6rem}
+.needBtn .label{font-size:1rem;font-weight:800}
+.needTitle{font-size:1.25rem;font-weight:800;margin-bottom:10px}
+.needSaid{font-size:2rem;font-weight:800;text-align:center;padding:26px 8px}
+.expandBtn{width:100%;padding:14px;font-size:1.05rem;font-weight:700;border-style:dashed}
+.cardbtn.guide{animation:guidePulse 1s ease-in-out infinite;outline:5px solid #f59e0b;outline-offset:-3px}
+@keyframes guidePulse{50%{transform:scale(1.07)}}
+
+/* ---------- MatIA V9: ajustes de maquetación móvil ---------- */
+.bottom .inner{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.bottom .inner .navBtn{min-width:0;padding:6px 2px;font-size:.82rem;line-height:1.1;text-align:center}
+.bottom .inner .navBtn span{font-size:1.5rem}
+#expandBox ~ .row{display:grid!important;grid-template-columns:1fr 1fr;gap:8px}
+#expandBox ~ .row .bigSpeak{grid-column:1/-1;min-height:60px;font-size:1.15rem}
+#expandBox ~ .row button{min-width:0;padding:10px 6px;font-size:.92rem}
+`;
+function patchDom() {
+  if (document.getElementById("nav_comunicar")) return;
+  try {
+    const st = document.createElement("style"); st.id = "matia-css"; st.textContent = MATIA_CSS; document.head.appendChild(st);
+    document.title = "MatIA";
+    const mt = document.querySelector('meta[name="apple-mobile-web-app-title"]'); if (mt) mt.setAttribute("content", "MatIA");
+    const q = s => document.querySelector(s);
+    const main = document.getElementById("mainScroll");
+    if (main) {
+      [...main.children].forEach(p => {
+        if (!p.classList.contains("panel")) return;
+        if (p.classList.contains("gameLaunchPanel")) p.classList.add("v-jugar");
+        else if (p.classList.contains("mode")) p.classList.add("v-comunicar-cg");
+        else if (p.querySelector("#favoritesList")) p.classList.add("v-frases-cg");
+        else if (p.querySelector("#sentence") || p.querySelector("#predictions") || p.querySelector("#tabs") || p.querySelector("#items")) p.classList.add("v-comunicar");
+      });
+      const sen = document.getElementById("sentence");
+      if (sen && !document.getElementById("expandBox")) { const d = document.createElement("div"); d.id = "expandBox"; d.style.marginTop = "8px"; sen.insertAdjacentElement("afterend", d); }
+      const pr = document.getElementById("predictions");
+      if (pr && pr.parentElement) { const t = pr.parentElement.querySelector(".small"); if (t) t.innerHTML = "<b>💡 Quizá quieres…</b>"; }
+      const fav = q("#favoritesList"); const favPanel = fav && fav.closest(".panel");
+      const mkPanel = (cls, id) => { const d = document.createElement("div"); d.className = "panel " + cls; d.innerHTML = '<div id="' + id + '"></div>'; return d; };
+      const anchor = favPanel || main.lastElementChild;
+      anchor.insertAdjacentElement("beforebegin", mkPanel("v-necesito", "needBox"));
+      anchor.insertAdjacentElement("beforebegin", mkPanel("v-frases", "phrasesBox"));
+    }
+    const inner = q(".bottom .inner");
+    if (inner) inner.innerHTML =
+      '<button id="nav_comunicar" class="navBtn" onclick="setView(\'comunicar\')"><span>🗣️</span>Comunicar</button>' +
+      '<button id="nav_necesito" class="navBtn" onclick="setView(\'necesito\')"><span>❤️</span>Necesito</button>' +
+      '<button id="nav_frases" class="navBtn" onclick="setView(\'frases\')"><span>⭐</span>Mis frases</button>' +
+      '<button id="nav_jugar" class="navBtn" onclick="setView(\'jugar\')"><span>🎮</span>Jugar</button>';
+    const pinBtn = document.querySelector('#caregiverBar button[onclick="changePin()"]');
+    if (pinBtn && !document.getElementById("backupAlert")) { const b = document.createElement("button"); b.id = "backupAlert"; b.style.display = "none"; b.textContent = "⚠️ Copia pendiente"; b.setAttribute("onclick", "openSheet('editorPanel')"); pinBtn.insertAdjacentElement("beforebegin", b); }
+    const wk = document.getElementById("weeklyBox") || document.getElementById("insightsBox");
+    if (wk && !document.getElementById("patternsBox")) {
+      const pb = document.createElement("div"); pb.id = "patternsBox"; pb.className = "small"; pb.style.marginTop = "12px";
+      const tb = document.createElement("div"); tb.className = "row"; tb.style.marginTop = "12px"; tb.innerHTML = '<button class="primary" onclick="openTherapistReport()">📄 Informe para terapeuta</button>';
+      wk.insertAdjacentElement("afterend", pb); pb.insertAdjacentElement("afterend", tb);
+    }
+    const ex = document.querySelector('button[onclick="exportData()"]'); if (ex) { ex.textContent = "📦 Crear copia de seguridad"; ex.classList.add("primary"); }
+    const im = document.querySelector('button[onclick="importClick()"]');
+    if (im) { im.textContent = "📥 Restaurar copia"; if (!document.getElementById("backupInfo")) { const d = document.createElement("div"); d.id = "backupInfo"; d.className = "small"; d.style.width = "100%"; im.insertAdjacentElement("afterend", d); } }
+    const inf = document.getElementById("importFile"); if (inf) inf.setAttribute("accept", ".matia,.json,application/json");
+  } catch (e) { console.warn("MatIA patchDom:", e); }
+}
+patchDom();
 
 setView("comunicar", true);

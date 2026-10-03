@@ -58,4 +58,14 @@ function init() {
   })();
 }
 
-init();
+/* Arranque: si el HTML antiguo no carga matia-v8.js, se carga aquí antes de iniciar.
+   Si el script falla, la app arranca igualmente como la V7. */
+function bootMatia() {
+  if (typeof setView === "function") { init(); return; }
+  const s = document.createElement("script");
+  s.src = "js/matia-v8.js?v=9";
+  s.onload = () => init();
+  s.onerror = () => init();
+  document.head.appendChild(s);
+}
+bootMatia();
